@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bethesda.raphaelsv.basic.mapper.Ingredient">
+    <select id="getDataCnt" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="int">
+        <![CDATA[
+        /* Users.getDataCnt */
+        SELECT count(*) as cnt
+        FROM tb_member
+        WHERE 1 = 1
+        ]]>
+        <if test='searchValue != null and !searchValue.equals("")'>
+            AND (
+            usernm LIKE CONCAT('%', #{searchValue}, '%')
+            OR userid LIKE CONCAT('%', #{searchValue}, '%')
+            )
+        </if>
+    </select>
+
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
+        <![CDATA[
+        /* Users.getDataList */
+        SELECT
+            userid
+            ,pwd
+            ,usernm
+            ,level
+            ,useyn
+        FROM tb_member
+        WHERE 1 = 1
+        ]]>
+        <if test='searchValue != null and !searchValue.equals("")'>
+            AND (
+            usernm LIKE CONCAT('%', #{searchValue}, '%')
+            OR userid LIKE CONCAT('%', #{searchValue}, '%')
+            )
+        </if>
+        ORDER BY userid DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+</mapper>
+

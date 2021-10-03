@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/defaultLayoutNoFooter">
+
+<head>
+    <title>AE모니터링</title>
+</head>
+
+<body id="page-top">
+
+<th:block layout:fragment="content">
+
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/aemonitor/examlist}">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">AE관리시스템<sup>2.0</sup></div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/aemonitor/examlist}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>[[${menuTitle}]]</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item" th:each="oneDepth : ${menuOneDepth}">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" th:data-target="'#collapse' + ${oneDepth.menuNo}"
+                   aria-expanded="true" th:aria-controls="'collapse' + ${oneDepth.menuNo}">
+                    <th:block th:if="${oneDepth.menuNo} == '9000224'" >
+                        <i class="fas fa-fw fa-chart-area"></i>
+                    </th:block>
+                    <th:block th:if="${oneDepth.menuNo} == '2080000'" >
+                        <i class="fas fa-fw fa-cog"></i>
+                    </th:block>
+                    <th:block th:if="${oneDepth.menuNo} != '9000224' and ${oneDepth.menuNo} != '2080000'" >
+                        <i class="fas fa-fw fa-table"></i>
+                    </th:block>
+                    <span>[[${oneDepth.menuNm}]]</span>
+                </a>
+                <div th:id="'collapse' + ${oneDepth.menuNo}" class="collapse" th:aria-labelledby="'heading' + ${oneDepth.menuNo}" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <!--<h6 class="collapse-header">Custom Components:</h6>-->
+                        <th:block th:each="twoDepth : ${menuAllDepth}" th:if="${twoDepth.upperMenuId} == ${oneDepth.menuNo}" >
+                            <a class="collapse-item" href="javascript:alert('준비중입니다.')">[[${twoDepth.menuNm}]]</a>
+                        </th:block>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+            <!-- Sidebar Message -->
+            <div class="sidebar-card">
+                <img class="sidebar-card-illustration mb-2"  th:src="@{/img/undraw_rocket.svg}" alt="">
+                <p class="text-center mb-2"><strong>AE관리시스템</strong>  개발진행중</p>
+                <a class="btn btn-success btn-sm" th:href="@{/aemonitor/examApiTest}">API TEST</a>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form
+                            class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                        >
+                        <div class="input-group">
+                            <select name="dataTable_length" id="studyId" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm">
+                                <th:block th:each="studyInfo : ${studyInfoList}" >
+                                <option th:value="${studyInfo.studyId}" th:text="${studyInfo.studyNm}" />
+                                </th:block>
+                            </select>
+                            <select name="dataTable_length" id="studyInstId" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm" onchange="aemStdyPrtcpntDataChange(1);">
+                                <th:block th:each="studyInstInfo : ${studyInstInfoList}"  >
+                                    <option th:value="${studyInstInfo.stdyInstId}" th:text="${studyInstInfo.stdyInstName}" />
+                                </th:block>
+                            </select>
+                        </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                 aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                               placeholder="Search for..." aria-label="Search"
+                                               aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter">3+</span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Alerts Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 12, 2019</div>
+                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-success">
+                                            <i class="fas fa-donate text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 7, 2019</div>
+                                        $290.29 has been deposited into your account!
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 2, 2019</div>
+                                        Spending Alert: We've noticed unusually high spending for your account.
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            </div>
+                        </li>
+                        </li>
+
+                        <!-- Nav Item - Messages -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-envelope fa-fw"></i>
+                                <!-- Counter - Messages -->
+                                <span class="badge badge-danger badge-counter">7</span>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="messagesDropdown">
+                                <h6 class="dropdown-header">
+                                    Message Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" th:src="@{/img/undraw_profile_1.svg}"
+                                             alt="">
+                                        <div class="status-indicator bg-success"></div>
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
+                                            problem I've been having.</div>
+                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" th:src="@{/img/undraw_profile_2.svg}"
+                                             alt="">
+                                        <div class="status-indicator"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-truncate">I have the photos that you ordered last month, how
+                                            would you like them sent to you?</div>
+                                        <div class="small text-gray-500">Jae Chun · 1d</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" th:src="@{/img/undraw_profile_3.svg}"
+                                             alt="">
+                                        <div class="status-indicator bg-warning"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-truncate">Last month's report looks great, I am very happy with
+                                            the progress so far, keep up the good work!</div>
+                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
+                                             alt="">
+                                        <div class="status-indicator bg-success"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
+                                            told me that people say this to all dogs, even if they aren't good...</div>
+                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                            </div>
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><span th:text="${userinfo.userNm}" /></span>
+                                <img class="img-profile rounded-circle"
+                                     th:src="@{/img/undraw_profile.svg}">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Activity Log
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- 참여자목록 -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <div style="float: left;margin-top:12px">
+                                   참여자정보
+                                </div>
+
+                                <div class="layout940" style="float: right">
+                                    <table style="font-size:12px">
+                                        <tr>
+                                            <td valign="middle" style="padding: 4px;">
+                                                <input type="checkbox" id="setAllAt" name="setAllAt" index="0" value="Y" style="width: 20px;height: 20px">
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;color:#858796">
+                                                전체
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;">
+                                                <input type="checkbox" id="setTodayAt" name="setTodayAt" index="0" value="Y" style="width: 20px;height: 20px">
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;width:94px;color:#858796">
+                                                오늘방문예정
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;color:#858796">
+                                                증상등록일
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;">
+                                                <input type="text" id="sdate" name="sdate" readonly class="form-control form-control-sm dis_inline" style="width:130px;"
+                                                th:value="${sdate}">
+                                                <img src="/img/cal.png" style="width:18px;height:18px;margin-left:-24px">
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;color:#858796">
+                                                ~
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;">
+                                                <input type="text" id="edate" name="edate" readonly class="form-control form-control-sm dis_inline" style="width:130px;"
+                                                th:value="${edate}">
+                                                <img src="/img/cal.png" style="width:18px;height:18px;margin-left:-24px">
+                                            </td>
+                                            <td valign="middle" style="padding: 4px;">
+                                                <a href="javascript:aemStdyPrtcpntDataChange(1);" class="btn btn-primary btn-icon-split btn-sm">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-search fa-sm"></i>
+                                                </span><span class="text">검색</span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered display nowrap" id="dataTable" width="100%" cellspacing="0" style="font-size:12px;">
+                                    <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>studyId</th>
+                                        <th>studyInstId</th>
+                                        <th>ENR_NO</th>
+                                        <th>이니셜</th>
+                                        <th>증상</th>
+                                        <th>성별</th>
+                                        <th>전화번호</th>
+                                        <th>생년월일</th>
+                                        <th>앱아이디</th>
+                                        <th>방문예정일</th>
+                                        <th>최근등록일</th>
+                                        <th>확인자</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="aemStdyPrtcpntVO, num : ${aemStdyPrtcpntVOList}">
+                                            <td>[[${num.count}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.studyId}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.prtcpntId}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.enrlNo}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.initial}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.newSymptms}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.sexdstnCode}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.telno}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.birthday}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.pcnAppId}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.visitForecastDe}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.regDt}]]</td>
+                                            <td>[[${aemStdyPrtcpntVO.cnfrmrNm}]]</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of 참여자목록  -->
+
+                    <!-- 증상 -->
+                    <div id="SymptmsUi" style="position: relative">
+
+
+
+
+                        <!-- 참여자 증상 Start -->
+                        <div class="leftLayout">
+                            <div class="card shadow mb-4" id="SymptmsUiLeft" style="margin-right:4px;">
+                                <div class="card-header py-3" style="height:70px">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <div style="float: left;margin-top:12px">
+                                            증상정보
+                                        </div>
+
+                                        <div style="float: right">
+                                            <table style="font-size:12px">
+                                                <tr>
+                                                    <td valign="middle" style="padding: 4px;">
+                                                        <input type="checkbox" id="selSymptmsSeq100" name="selSymptmsSeq" index="0" style="width: 20px;height: 20px"
+                                                               onchange="symptmsListDataChangeSelect();" checked>
+                                                    </td>
+                                                    <td valign="middle" style="padding: 4px;color:#858796">
+                                                        앱
+                                                    </td>
+                                                    <td valign="middle" style="padding: 4px;">
+                                                        <input type="checkbox" id="selSymptmsSeq300" name="selSymptmsSeq" index="0" value="Y" style="width: 20px;height: 20px"
+                                                               onchange="symptmsListDataChangeSelect();" checked>
+                                                    </td>
+                                                    <td valign="middle" style="padding: 4px;color:#858796">
+                                                        전화
+                                                    </td>
+                                                    <td valign="middle" style="padding: 4px;">
+                                                        <input type="checkbox" id="selSymptmsSeq400" name="selSymptmsSeq" index="0" value="Y" style="width: 20px;height: 20px"
+                                                               onchange="symptmsListDataChangeSelect();" checked>
+                                                    </td>
+                                                    <td valign="middle" style="padding: 4px;color:#858796">
+                                                        대면
+                                                    </td>
+                                                    <td valign="middle" style="padding: 4px;">
+                                                        <a href="javascript:SymptomDetailNew();" class="btn btn-primary btn-icon-split btn-sm">
+                                                            <span class="icon text-white-50">
+                                                                <i class="fas fa-arrow-right"></i>
+                                                            </span>
+                                                            <span class="text">입력</span>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                    </h6>
+                                </div>
+                                <div class="card-body" style="position:relative">
+                                    <div id="symptomChart" class="table-responsive">
+                                        <div id="symptomChartLeft" style="overflow-x:hidden;">
+                                            <table class="table table-bordered" id="SymptomTable" width="100%" cellspacing="0"  style="font-size:12px;">
+                                                <thead>
+                                                <tr>
+                                                    <th width="16%">NO</th>
+                                                    <th width="0%">studyId</th>
+                                                    <th width="0%">prtcpntId</th>
+                                                    <th width="0%">symptmsSeq</th>
+                                                    <th width="0%">symptmsRegtypeCode</th>
+                                                    <th width="16%">구분</th>
+                                                    <th width="18%">등록일</th>
+                                                    <th width="20%">확인여부</th>
+                                                    <th width="30%">내용</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="SymptomDetail" class="card-body">dfsdfs</div>
+                            </div>
+                        </div>
+                        <!-- 참여자 증상 End -->
+                        <!-- AE 모니터링 Start -->
+                        <div class="rightLayout" >
+                            <div class="card shadow mb-4" id="SymptmsUiRight" style="margin-left:4px;">
+                                <div class="card-header py-3" style="height:70px">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <div style="float: left;margin-top:12px">
+                                            AE모니터링
+                                        </div>
+                                        <div style="float: right">
+                                            <a href="javascript:aeChartViewNew();" class="btn btn-primary btn-icon-split btn-sm">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-arrow-right"></i>
+                                                </span>
+                                                <span class="text">입력</span>
+                                            </a>
+                                        </div>
+                                    </h6>
+                                </div>
+                                <div class="card-body" style="position:relative">
+                                    <div id="aeTree"></div>
+                                </div>
+                                <div id="aeChart" class="card-body aeChartUI"></div>
+                            </div>
+                        </div>
+                        <!-- AE 모니터링 End -->
+                    </div>
+                    <!-- End of 증상 -->
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>2021 BETHESDA All Rights Reserved</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title-2" id="exampleModalLabel" style="margin-bottom: 0;line-height: 1.5;">로그아웃 하시겠습니까?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">로그아웃 하시려면 로그아웃버튼을 눌려주십시오.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="javascript:logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="adMoniModal" class="adMoniModal">
+        <div id="pcnctcae" class="card-body aeChartUI adMoniModalCont"></div>
+    </div>
+
+    <form id="logout" name="logout" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+
+    <style type="text/css">
+        .table td, .table th {
+            padding: .55rem;
+        }
+        .selected {
+            background: lightgoldenrodyellow !important;
+        }
+        .table-bordered > tbody > tr:not(.selected):hover {
+            cursor: pointer !important;
+            background: lightgray !important;
+        }
+        .tableClass {
+            width : 100%;
+            font-size : 12px;
+        }
+        .tableClass td, .tableClass th {
+            padding: .55rem;
+        }
+        .tdTextRight {
+            text-align:right;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+        .tdTextLeft {
+            text-align:left;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+        .tdTextCenter {
+            text-align:center;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+        .btn_right {
+            border-radius: 5px;
+            border: 1px solid skyblue;
+            background-color: #4e73df;
+            color: #ffffff;
+            padding: 6px;
+            display:inline;
+        }
+        .dis_inline {
+            display:inline;
+        }
+        .aeChartUI {
+            border:1px solid darkgray;
+            background-color: #ffffff;
+            width:100%;
+            border-radius: calc(.35rem - 1px);"
+        }
+        .adMoniModal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 999; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+        }
+
+        .adMoniModalCont {
+            margin: auto;
+            padding: 20px;
+            width:70%;
+            z-index: 999;
+            background-color: #ffffff;
+        }
+    </style>
+
+    <script>
+        var gStudyId;
+        var gPrtcpntId;
+        var gStudyInstId;
+        var gSymptmsSeq;
+        var gSumrySeq;
+
+        $(document).ready(function() {
+            var events = $('#events');
+            $('#SymptmsUi').hide();
+            $('#aeChart').hide();
+            $("#adMoniModal").hide();
+
+            $('#dataTable').DataTable( {
+                scrollY:        "176px",
+                scrollCollapse: true,
+                paging:         true,
+                columnDefs: [
+                    {
+                        "targets": [1],
+                        "visible": false,
+                        "searchable": false
+                    },
+                    {
+                        "targets": [2],
+                        "visible": false
+                    },
+                    {
+                        "targets": [9],
+                        "visible": false
+                    },
+                    {
+                        "targets": [10],
+                        "visible": false
+                    }
+
+                ],
+                responsive: true,
+                bInfo : false
+            } );
+
+
+            $('#SymptomTable').DataTable( {
+                scrollY:        "176px",
+                scrollCollapse: true,
+                paging:         true,
+                columnDefs: [
+                    {
+                        "targets": [1],
+                        "visible": false,
+                        "searchable": false
+                    },
+                    {
+                        "targets": [2],
+                        "visible": false
+                    },
+                    {
+                        "targets": [3],
+                        "visible": false
+                    },
+                    {
+                        "targets": [4],
+                        "visible": false
+                    }
+                ],
+                responsive: true,
+                bInfo : false
+            } );
+        } );
+
+       function logout() {
+            var form = document.logout;
+            form.action = "[[@{/accounts/logout}]]";
+            form.submit();
+        }
+
+        function aeChartClose() {
+            console.log("aeChartClose -->");
+            $('#symptomChart').show();
+            $("#aeChart").empty();
+            $('#aeChart').hide();
+        }
+
+        $('#dataTable tbody').on('click', 'tr', function () {
+            var data = $('#dataTable').DataTable().row( this ).data();
+
+            symptmsListDataChange(data[1], data[2], 1);
+            aeTreeDataChange(data[1], data[2], 'All');
+
+            $("#aeChart").empty();
+            $('#aeChart').hide();
+            $('#symptomChart').show();
+            $('#SymptmsUi').show();
+            $("#dataTable tr").not(this).removeClass('selected');
+            $(this).addClass('selected');
+            //$(this).toggleClass('selected');
+        });
+
+        $('#SymptomTable tbody').on('click', 'tr', function () {
+            var data = $('#SymptomTable').DataTable().row( this ).data();
+            SymptomDetail(data[1], data[2], data[3]);
+            $("#SymptomTable tr").not(this).removeClass('selected');
+            $(this).addClass('selected');
+            //$(this).toggleClass('selected');
+        });
+
+        function  aeChartViewNew() {
+            console.log("aeChartViewNew-studyId : " + gStudyId);
+            console.log("aeChartViewNew-prtcpntId : " + gPrtcpntId);
+
+            $.ajax({
+                url:'[[@{/aemonitor/aeChartViewNew}]]',
+                type:'get',
+                dataType: 'html',
+                data:{
+                    studyId : gStudyId,
+                    prtcpntId : gPrtcpntId,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    $(".aeTree").css("color", "#858796");
+                    $(".aeTree").css("font-weight", "normal");
+
+                    //$('#symptomChart').hide();
+                    $("#aeChart").empty();
+                    $('#aeChart').show();
+                    $("#aeChart").html(data);
+                }
+            });
+        }
+
+        function  aeChartView(studyId, prtcpntId, sumrySeq, mntrngSeq) {
+            console.log("aeChartView-studyId : " + studyId);
+            console.log("aeChartView-prtcpntId : " + prtcpntId);
+            console.log("aeChartView-sumrySeq : " + sumrySeq);
+            gSumrySeq = sumrySeq;
+
+            $.ajax({
+                url:'[[@{/aemonitor/aeChartView}]]',
+                type:'get',
+                dataType: 'html',
+                data:{
+                    studyId : studyId,
+                    prtcpntId : prtcpntId,
+                    sumrySeq : sumrySeq,
+                     [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    //$('#symptomChart').hide();
+                    $("#aeChart").empty();
+                    $('#aeChart').show();
+                    $("#aeChart").html(data);
+                }
+            });
+        }
+
+        function aeChartInsert() {
+            if ($("#aeTermCtcae").val() == "") {
+                modal({
+                    type: 'warning',
+                    title: '주의',
+                    text: 'AE명을 입력해 주십시오',
+                    center: false,
+                });
+                $("#aeTermCtcae").focus();
+                return;
+            }
+            var param = $("form[name=AEMMntrngVOForm]").serialize();
+            $.ajax({
+                url:'[[@{/aemonitorapi/aeChartInsert}]]',
+                type:'post',
+                data: param,
+                success:function(data){
+                    console.log(data);
+                    modal({
+                        type: 'success',
+                        title: 'Success',
+                        text: '등록되었습니다.'
+                    });
+                    aeTreeDataChange(gStudyId, gPrtcpntId, 'All');
+                    aeChartView(gStudyId, gPrtcpntId, 0, '');
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+
+        function aeFavorites() {
+            if ($("#aeTermCtcae").val() == "") {
+                modal({
+                    type: 'warning',
+                    title: '주의',
+                    text: 'AE명을 입력해 주십시오',
+                    center: false,
+                });
+                $("#aeTermCtcae").focus();
+                return;
+            }
+            var param = $("form[name=AEMMntrngVOForm]").serialize();
+            $.ajax({
+                url:'[[@{/aemonitorapi/aeFavorite}]]',
+                type:'post',
+                data: param,
+                success:function(data){
+                    console.log(data);
+                    modal({
+                        type: 'success',
+                        title: 'Success',
+                        text: '즐겨 찾기에 등록되었습니다.'
+                    });
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+
+        function aeChartUpdate(code) {
+            var messageVal = "수정되었습니다.";
+            if ( code == 1) {
+                $("#mntrngDcsnAt").val("Y");
+            }
+            else {
+                $("#mntrngDcsnAt").val("N");
+            }
+
+            if ( code == 2 ) {
+                messageVal = "삭제되었습니다.";
+            }
+            var param = $("form[name=AEMMntrngVOForm]").serialize();
+            $.ajax({
+                url:'[[@{/aemonitorapi/aeChartUpdate}]]',
+                type:'post',
+                data: param,
+                success:function(data){
+                    console.log(data);
+                    modal({
+                        type: 'success',
+                        title: 'Success',
+                        text: messageVal
+                    });
+                    aeTreeDataChange(gStudyId, gPrtcpntId, 'All');
+                    if ( code != 2 ) {
+                        aeChartView(gStudyId, gPrtcpntId, gSumrySeq, '');
+                    }
+                    else {
+                        $("#aeChart").empty();
+                        $("#aeChart").hide();
+                    }
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+        function aeChartDelete() {
+            modal({
+                type: 'confirm',
+                title: '주의',
+                text: '삭제 하시겠습니까?',
+                callback: function (result) {
+                    if ( result == true) {
+                        $("#useYn").val("N");
+                        aeChartUpdate(2);
+                    }
+                }
+            })
+        }
+
+        function aeChartAction() {
+            aeChartUpdate(1);
+        }
+
+        function SymptmsInsert() {
+            if ($("#symptmsCn").val() == "") {
+                modal({
+                    type: 'warning',
+                    title: '주의',
+                    text: '내용을 입력해 주십시오.',
+                    center: false,
+                });
+                $("#symptmsCn").focus();
+                return;
+            }
+
+            var param = $("form[name=aemPrtcpntSymptmsVOForm]").serialize();
+            $.ajax({
+                url:'[[@{/aemonitorapi/symptmsInsert}]]',
+                type:'post',
+                data: param,
+                success:function(data){
+                    console.log(data);
+                    modal({
+                        type: 'success',
+                        title: 'Success',
+                        text: '등록되었습니다.'
+                    });
+                    aemStdyPrtcpntDataChange(4);
+                    $('#symptomChart').show();
+                    $('#SymptmsUi').show();
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+
+        function SymptmsUpdate() {
+            if ($("#symptmsCn").val() == "") {
+                modal({
+                    type: 'warning',
+                    title: '주의',
+                    text: '내용을 입력해 주십시오.',
+                    center: false,
+                });
+                $("#symptmsCn").focus();
+                return;
+            }
+
+            var param = $("form[name=aemPrtcpntSymptmsVOForm]").serialize();
+            $.ajax({
+                url:'[[@{/aemonitorapi/symptmsUpdate}]]',
+                type:'post',
+                data: param,
+                success:function(data){
+                    console.log(data);
+                    modal({
+                        type: 'success',
+                        title: 'Success',
+                        text: '수정되었습니다.'
+                    });
+                    aemStdyPrtcpntDataChange(2);
+                    $('#symptomChart').show();
+                    $('#SymptmsUi').show();
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+
+        function SymptmsDelete() {
+            var param = $("form[name=aemPrtcpntSymptmsVOForm]").serialize();
+            modal({
+                type: 'confirm',
+                title: '주의',
+                text: '삭제 하시겠습니까?',
+                callback: function(result) {
+                    if ( result == true) {
+                        $.ajax({
+                            url:'[[@{/aemonitorapi/symptmsDelete}]]',
+                            type:'post',
+                            data: param,
+                            success:function(data){
+                                console.log(data);
+                                modal({
+                                    type: 'success',
+                                    title: 'Success',
+                                    text: '삭제되었습니다.'
+                                });
+                                aemStdyPrtcpntDataChange(3);
+                                $('#symptomChart').show();
+                                $('#SymptmsUi').show();
+                            },
+                            error:function(data){
+                                console.log(data);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function  SymptomDetailNew() {
+            console.log("SymptomDetailNew-studyId : " + gStudyId);
+            console.log("SymptomDetailNew-prtcpntId : " + gPrtcpntId);
+
+            $.ajax({
+                url:'[[@{/aemonitor/symptmsNew}]]',
+                type:'get',
+                dataType: 'html',
+                data:{
+                    studyId : gStudyId,
+                    prtcpntId : gPrtcpntId,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    $("#SymptomDetail").empty();
+                    $("#SymptomDetail").html(data);
+                }
+            });
+        }
+
+        function  SymptomDetail(studyId, prtcpntId, symptmsSeq) {
+            var counter = 1;
+            console.log("SymptomDetail-studyId : " + studyId);
+            console.log("SymptomDetail-prtcpntId : " + prtcpntId);
+            console.log("SymptomDetail-symptmsSeq : " + symptmsSeq);
+
+            gSymptmsSeq = symptmsSeq;
+
+            $.ajax({
+                url:'[[@{/aemonitor/symptms}]]',
+                type:'get',
+                dataType: 'html',
+                data:{
+                    studyId : studyId,
+                    prtcpntId : prtcpntId,
+                    symptmsSeq : symptmsSeq,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    $("#SymptomDetail").empty();
+                    $("#SymptomDetail").html(data);
+                }
+            });
+        }
+
+        function  aeTreeDataChange(studyId, prtcpntId, viewType) {
+            var counter = 1;
+            console.log("aeTreeDataChange-studyId : " + studyId);
+            console.log("aeTreeDataChange-prtcpntId : " + prtcpntId);
+
+            $.ajax({
+                url:'[[@{/aemonitorapi/aeTreeList}]]',
+                type:'get',
+                dataType: 'json',
+                data:{
+                    studyId : studyId,
+                    prtcpntId : prtcpntId,
+                    viewType : viewType,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    $("#aeTree").empty();
+                    $.each(data, function(key) {
+                            $('#aeTree').append('<div style="padding-top:2px;padding-bottom:2px;">'
+                                + '<!--<img src="/img/graychip.png" style="margin-right:4px;width:8px;height:8px;">-->'
+                                + '● <span class="aeTree" id="aeTreeRow_' + key + '" style="cursor:pointer;" onclick="aeChartView(\''
+                                + data[key].studyId + '\',\''
+                                + data[key].prtcpntId + '\',\''
+                                + data[key].sumrySeq + '\',\''
+                                + '' + '\'); aeTreeSet($(this));">'
+                                + '[AE명 : ' + data[key].adNm + '], '
+                                + '[Grade : ' + data[key].grade + '], '
+                                + '[AE시작일 : ' + data[key].startDt + '], '
+                                + '[AE종료일 : ' + data[key].endDt + '], '
+                                + '[Serious여부 : ' + data[key].serious + '], '
+                                + '[Serious내용 : ' + data[key].seriousCont + '], '
+                                + '[인과관계 : ' + data[key].relation + '], '
+                                + '[예측여부 : ' + data[key].prediction + '], '
+                                + '[관련조치 : ' + data[key].relationMeasure + '], '
+                                + '[기타조치 : ' + data[key].etcMeasure + '], '
+                                + '[결과 : ' + data[key].aeResult + '], '
+                                + '[' + data[key].mnAt + ']'
+                                + '</span>'
+                                + '<img src="/img/copy.png" style="margin-left:4px;width:12px;height:12px;" onclick="copyElement(\'aeTreeRow_' + key + '\')"></div>');
+
+                        counter++;
+                    });
+                }
+            });
+        }
+
+        function aeTreeSet(item) {
+            $(".aeTree").css("color", "#858796");
+            $(".aeTree").css("font-weight", "normal");
+            item.css("color", "#1e73be");
+            item.css("font-weight", "700");
+        }
+
+        function  symptmsListDataChange(studyId, prtcpntId, gubun) {
+            var tableGrid = $('#SymptomTable').DataTable();
+            var counter = 1;
+            var viewType = "900";
+
+            if ( $("#selSymptmsSeq100").is(":checked") == true ) viewType = viewType + ",110,120,130,140";
+            if ( $("#selSymptmsSeq300").is(":checked") == true ) viewType = viewType + ",300";
+            if ( $("#selSymptmsSeq400").is(":checked") == true ) viewType = viewType + ",400";
+
+            console.log("symptmsListDataChange-studyId : " + studyId);
+            console.log("symptmsListDataChange-prtcpntId : " + prtcpntId);
+            console.log("symptmsListDataChange-viewType : " + viewType);
+            gStudyId = studyId;
+            gPrtcpntId = prtcpntId;
+
+            $.ajax({
+                url:'[[@{/aemonitorapi/symptmsList}]]',
+                type:'get',
+                dataType: 'json',
+                data:{
+                    studyId : studyId,
+                    prtcpntId : prtcpntId,
+                    viewType : viewType,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    $("#SymptomDetail").empty();
+                    tableGrid.clear().draw();
+
+                    $.each(data, function(key) {
+                        if ( gubun == 4 && key == 0 ) {
+                            gSymptmsSeq =  data[key].symptmsSeq;
+                        }
+                        tableGrid.row.add([
+                            counter,
+                            data[key].studyId,
+                            data[key].prtcpntId,
+                            data[key].symptmsSeq,
+                            data[key].symptmsRegtypeCode,
+                            data[key].symRegTxt,
+                            data[key].symptmsRegistDe,
+                            data[key].symptmsConfirm,
+                            data[key].symptmsCn
+                        ]).draw(false);
+                        counter++;
+                    });
+                    $("#adMoniModal").hide();
+                    if (gubun == 2 || gubun == 4) {
+                        SymptomDetail(gStudyId, gPrtcpntId, gSymptmsSeq);
+                    }
+                }
+            });
+        }
+
+        function symptmsListDataChangeSelect() {
+            symptmsListDataChange(gStudyId, gPrtcpntId, 1);
+        }
+
+        function aemStdyPrtcpntDataChange(gubun) {
+            var tableGrid = $('#dataTable').DataTable();
+            var symptomTable = $('#SymptomTable').DataTable();
+            var counter = 1;
+
+            var studyId = $("#studyId").val();
+            var studyInstId = $("#studyInstId").val();
+            var setStartDe  = $("#sdate").val();
+            var setEndDe = $("#edate").val();
+            var setAllAt = "N";
+            var setTodayAt = "N";
+            if ( $("#setAllAt").is(":checked") == true ) setAllAt = "Y";
+            if ( $("#setTodayAt").is(":checked") == true ) setTodayAt = "Y";
+
+            console.log("studyId : " + studyId);
+            console.log("studyInstId : " + studyInstId);
+            gStudyId = studyId;
+            gStudyInstId = studyInstId;
+
+            $.ajax({
+                url:'[[@{/aemonitorapi/aemStdyPrtcpnt}]]',
+                type:'get',
+                dataType: 'json',
+                data:{
+                    studyId : studyId,
+                    studyInstId : studyInstId,
+                    setAllAt : setAllAt,
+                    setTodayAt : setTodayAt,
+                    setStartDe : setStartDe,
+                    setEndDe : setEndDe,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+
+                    if ( gubun == 1 ) {
+                        $("#aeChart").empty();
+                        $('#aeChart').hide();
+                        $('#SymptmsUi').hide();
+                        $("#SymptomDetail").empty();
+                    }
+                    tableGrid.clear().draw();
+                    symptomTable.clear().draw();
+                    $.each(data, function(key) {
+                        //console.log("list data : " + data[key].initial);
+                        tableGrid.row.add([
+                            counter,
+                            data[key].studyId,
+                            data[key].prtcpntId,
+                            data[key].enrlNo,
+                            data[key].initial,
+                            data[key].newSymptms,
+                            data[key].sexdstnCode,
+                            data[key].telno,
+                            data[key].birthday,
+                            data[key].pcnAppId,
+                            data[key].visitForecastDe,
+                            data[key].regDt,
+                            data[key].cnfrmrNm,
+                        ]).draw(false);
+
+                        counter++;
+                    });
+                    $("#adMoniModal").hide();
+                    if (gubun != 1) {
+                        symptmsListDataChange(gStudyId, gPrtcpntId, gubun);
+                    }
+                }
+            });
+        }
+
+        function pcnctcaeView() {
+            gCtcaeVer = "";
+            gMedDraCode = "";
+            gMedDraSoc = "";
+            gTerm = "";
+            gGrade = "";
+            gGrade_Lv = "";
+
+            $.ajax({
+                url:'[[@{/aemonitor/pcnctcaeView}]]',
+                type:'get',
+                dataType: 'html',
+                data:{
+                    studyId : gStudyId,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    $("#pcnctcae").empty();
+                    $("#pcnctcae").html(data);
+                    $("#adMoniModal").show();
+                }
+            });
+        }
+
+        function pcnctcaeHide() {
+            $("#pcnctcae").empty();
+            $("#adMoniModal").hide();
+        }
+
+        function gradeChoiceSend(term, medDraCode, grade_Lv) {
+            $('#aeTermCtcae').val(term);
+            $('#medDraCode').val(medDraCode);
+            $('#aeGrade' + grade_Lv).prop('checked',true);
+            pcnctcaeHide();
+        }
+
+        function allRowChoiceSend(medDraCode
+                                ,aeTremNm
+                                ,aeGrade
+                                ,saeAt
+                                ,saeDeath
+                                ,saeLifeThrt
+                                ,saeHsptlzNeed
+                                ,saeCsmalfnc
+                                ,saeCsdeform
+                                ,saeEtcSittn
+                                ,causalityCode
+                                ,predictAt
+                                ,aeActionCode
+                                ,etcActionCode
+                                ,aeRsltCode) {
+
+            $('#aeTermCtcae').val(aeTremNm);
+            $('#medDraCode').val(medDraCode);
+
+            if (aeGrade != "") $('#aeGrade' + (aeGrade / 10)).prop('checked', true);
+            if (saeAt == 'Y') $('#saeAt1').prop('checked', true);
+            if (saeAt == 'N') $('#saeAt2').prop('checked', true);
+
+            if (saeDeath == 'Y') $('#saeDeath').prop('checked', true);
+            if (saeLifeThrt == 'Y') $('#saeLifeThrt').prop('checked', true);
+            if (saeHsptlzNeed == 'Y') $('#saeHsptlzNeed').prop('checked', true);
+            if (saeCsmalfnc == 'Y') $('#saeCsmalfnc').prop('checked', true);
+            if (saeCsdeform == 'Y') $('#saeCsdeform').prop('checked', true);
+            if (saeEtcSittn == 'Y') $('#saeEtcSittn').prop('checked', true);
+
+            if (causalityCode == 'A10') $('#causalityCode1').prop('checked', true);
+            if (causalityCode == 'B10') $('#causalityCode2').prop('checked', true);
+            if (causalityCode == 'A20') $('#causalityCode3').prop('checked', true);
+            if (causalityCode == 'B20') $('#causalityCode4').prop('checked', true);
+            if (causalityCode == 'B30') $('#causalityCode5').prop('checked', true);
+            if (causalityCode == 'B40') $('#causalityCode6').prop('checked', true);
+            if (causalityCode == 'B50') $('#causalityCode7').prop('checked', true);
+            if (causalityCode == 'B60') $('#causalityCode8').prop('checked', true);
+            if (causalityCode == 'B70') $('#causalityCode9').prop('checked', true);
+
+            if (predictAt == 'Y') $('#predictAt1').prop('checked', true);
+            if (predictAt == 'N') $('#predictAt2').prop('checked', true);
+
+            if (aeActionCode != "") $('#aeActionCode' + (aeActionCode / 10)).prop('checked', true);
+            if (etcActionCode != "") $('#etcActionCode' + (etcActionCode / 10)).prop('checked', true);
+            if (aeRsltCode != "") $('#aeRsltCode' + (aeRsltCode / 100)).prop('checked', true);
+            pcnctcaeHide();
+        }
+
+        function  PcnctcaeListDataChange() {
+            var tableGrid = $('#pcnctcaeList').DataTable();
+            var pcnctcaeVal = "";
+            var ctcaeVer = "";
+            var medDraSoc = "";
+            var searchVal = $("#pcnctinput").val();
+
+            if ( $("#pcnctcaeCoList").val() != "" ) {
+                pcnctcaeVal = $("#pcnctcaeCoList").val().split("|");
+                ctcaeVer = pcnctcaeVal[0];
+                medDraSoc = pcnctcaeVal[1];
+            }
+
+            /*
+            if ( ctcaeVer == "" ) {
+                modal({
+                    type: 'primary',
+                    title: '필수입력',
+                    text: 'category를 선택해 주십시오.',
+                });
+                return;
+            }
+            */
+
+            console.log("PcnctcaeListDataChange-ctcaeVer : " + ctcaeVer);
+            console.log("PcnctcaeListDataChange-medDraSoc : " + medDraSoc);
+
+            $.ajax({
+                url:'[[@{/aemonitorapi/pcnctcaeList}]]',
+                type:'get',
+                dataType: 'json',
+                data:{
+                    ctcaeVer : ctcaeVer,
+                    medDraSoc : medDraSoc,
+                    searchVal : searchVal,
+                    [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+                },
+                success:function(data){
+                    //$("#SymptomDetail").empty();
+                    tableGrid.clear().draw();
+
+                    $.each(data, function(key) {
+                        tableGrid.row.add([
+                            data[key].term,
+                            data[key].medDraCode,
+                            data[key].medDraSoc,
+                            data[key].ctcaeVer
+                        ]).draw(false);
+                    });
+                    $("#pcnctcaeTowView").show();
+                    $("#pcnctcaeGradeView").hide();
+                    gGrade_Lv = "";
+
+                    tableGrid.columns.adjust().draw();
+                }
+            });
+        }
+
+        function copyElement(code) {
+            var copyText = $("#" + code).html();
+            console.log(copyText);
+
+            var textarea = document.createElement('textarea');
+            textarea.textContent = copyText;
+            document.body.appendChild(textarea);
+
+            var selection = document.getSelection();
+            var range = document.createRange();
+            //  range.selectNodeContents(textarea);
+            range.selectNode(textarea);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            //document.execCommand('copy')
+            if (document.execCommand('copy') == true) {
+                modal({
+                    type: 'success',
+                    title: 'Success - 클립보드에 복사되었습니다',
+                    text: copyText
+                });
+            }
+            selection.removeAllRanges();
+            document.body.removeChild(textarea);
+        }
+    </script>
+
+    <script>
+        $('#sdate').datepicker({
+            format : "yyyy-mm-dd",
+            language : "kr"
+        });
+
+        $('#edate').datepicker({
+            format : "yyyy-mm-dd",
+            language : "kr"
+        });
+    </script>
+
+</th:block>
+
+</body>
+
+</html>

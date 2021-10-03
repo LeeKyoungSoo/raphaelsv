@@ -1,0 +1,202 @@
+<th:block th:if="${newWrite} == 'Y'" >
+    <form id="aemPrtcpntSymptmsVOForm" name="aemPrtcpntSymptmsVOForm">
+    <input type="hidden" id="studyId" name="studyId" th:value="${studyId}" />
+    <input type="hidden" id="prtcpntId" name="prtcpntId" th:value="${prtcpntId}" />
+    <input type="hidden" id="symptmsSeq" name="symptmsSeq" value="" />
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <table class="tableClass" style="margin-right: 8px">
+        <colgroup>
+            <col style="width:25%;">
+            <col style="width:40%;">
+            <col style="width:15%;">
+            <col style="width:20%;">
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="tdTextRight" colspan="4">
+                <a href="javascript:SymptmsInsert();" class="btn btn-primary btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">등록</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>구분 :</div></th>
+            <td class="tdTextLeft" colspan="2">
+                <input type="radio" id="symptmsRegtypeCode_0" name="symptmsRegtypeCode" value="140">
+                앱
+
+                <input type="radio" id="symptmsRegtypeCode_1" name="symptmsRegtypeCode" value="300">
+                전화
+
+                <input type="radio" id="symptmsRegtypeCode_2" name="symptmsRegtypeCode" value="400" checked>
+                대면
+            </td>
+            <td class="tdTextCenter">
+                <input type="checkbox" id="symptmsConfirm" name="symptmsConfirm" value="Y">
+                확인
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>통화대상 :</div></th>
+            <td class="tdTextLeft"colspan="3">
+                <input type="text" id="callPartner" name="callPartner" style="width:100%"
+                       class="form-control form-control-sm dis_inline">
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>등록일 :</div></th>
+            <td class="tdTextLeft" colspan="3">
+                <input type="text" id="symptmsRegistDe" name="symptmsRegistDe" class="form-control form-control-sm dis_inline" style="width:130px;"
+                    th:value="${nowdate}" disabled>
+                <img src="/img/cal.png" style="width:18px;height:18px;margin-left:-26px">
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>내용 :</div></th>
+            <td class="tdTextLeft" colspan="3">
+                <textarea id="symptmsCn" name="symptmsCn" class="form-control form-control-sm"
+                          style="width:100%;height:140px;" ></textarea>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </form>
+</th:block>
+
+<th:block th:if="${newWrite} == 'N'" >
+    <form id="aemPrtcpntSymptmsVOForm" name="aemPrtcpntSymptmsVOForm">
+    <input type="hidden" id="studyId" name="studyId" th:value="${aemPrtcpntSymptmsVO.studyId}" />
+    <input type="hidden" id="prtcpntId" name="prtcpntId" th:value="${aemPrtcpntSymptmsVO.prtcpntId}" />
+    <input type="hidden" id="symptmsSeq" name="symptmsSeq" th:value="${aemPrtcpntSymptmsVO.symptmsSeq}" />
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <table class="tableClass" style="margin-right: 8px">
+        <colgroup>
+            <col style="width:25%;">
+            <col style="width:40%;">
+            <col style="width:15%;">
+            <col style="width:20%;">
+        </colgroup>
+        <tbody>
+        <tr>
+            <td class="tdTextRight" colspan="4">
+                <a href="javascript:SymptmsUpdate();" class="btn btn-primary btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">수정</span>
+                </a>
+
+                <a href="javascript:SymptmsDelete();" class="btn btn-primary btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    <span class="text">삭제</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>구분 :</div></th>
+            <td class="tdTextLeft" colspan="2">
+                <input type="radio" id="symptmsRegtypeCode_0" name="symptmsRegtypeCode"
+                       th:checked="${aemPrtcpntSymptmsVO.symptmsRegtypeCode < '200'}" disabled>
+                앱
+
+                <input type="radio" id="symptmsRegtypeCode_1" name="symptmsRegtypeCode"
+                       th:checked="${aemPrtcpntSymptmsVO.symptmsRegtypeCode == '300'}" disabled>
+                전화
+
+                <input type="radio" id="symptmsRegtypeCode_2" name="symptmsRegtypeCode"
+                       th:checked="${aemPrtcpntSymptmsVO.symptmsRegtypeCode == '400'}" disabled>
+                대면
+            </td>
+            <td class="tdTextCenter">
+                <input type="checkbox" id="symptmsConfirm" name="symptmsConfirm" value="Y"
+                       th:checked="${aemPrtcpntSymptmsVO.symptmsConfirm == 'Y'}">
+                확인
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>통화대상 :</div></th>
+            <td class="tdTextLeft"colspan="3">
+                <input type="text" id="callPartner" name="callPartner" style="width:100%"
+                       class="form-control form-control-sm dis_inline"
+                       th:value="${aemPrtcpntSymptmsVO.callPartner}">
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>등록일 :</div></th>
+            <td class="tdTextLeft" colspan="3">
+                [[${aemPrtcpntSymptmsVO.symptmsRegistDe}]]
+                <!--
+                <input type="text" id="symptmsRegistDe" name="symptmsRegistDe" class="form-control form-control-sm dis_inline" style="width:130px;"
+                       th:value="${aemPrtcpntSymptmsVO.symptmsRegistDe}">
+                <img src="/img/cal.png" style="width:18px;height:18px;margin-left:-26px">
+                -->
+            </td>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>내용 :</div></th>
+            <td class="tdTextLeft" colspan="3">
+                <textarea id="symptmsCn" name="symptmsCn" class="form-control form-control-sm"
+                          style="width:100%;height:140px;" >[[${aemPrtcpntSymptmsVO.symptmsCn}]]</textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <th class="tdTextRight"><div>답변전송 :</div></th>
+            <td class="tdTextLeft" colspan="3">
+                <a href='javascript:apiMessageComment(pcn_server,
+                                                        $("#s_studyId").val(),
+                                                        $("#s_prtcpntId").val(),
+                                                        "Text",
+                                                        $("#symptmsCnAnswer").val());'
+                   class="btn btn-primary btn-icon-split btn-sm">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-search fa-sm"></i>
+                        </span><span class="text">전송</span>
+                </a>
+                <textarea id="symptmsCnAnswer" name="symptmsCnAnswer" class="form-control form-control-sm"
+                          style="width:100%;height:140px;margin-top: 4px" ></textarea>
+            </td>
+        </tr>
+
+        <th:block th:if="${aemPrtcpntSymptmsVO.symptmsRegtypeCode} != '300' and ${aemPrtcpntSymptmsVO.symptmsRegtypeCode} != '400' and ${aemPrtcpntSymptmsVO.symptmsRegtypeCode} != '140'" >
+            <!-- 음성(130) / 동영상(120) / 사진(110) / -->
+            <tr>
+                <td class="tdTextCenter" colspan="4">
+                    <th:block th:if="${aemPrtcpntSymptmsVO.symptmsRegtypeCode} == '110'" >
+                        <th:block th:each="fileDetail : ${fileDetailList}">
+                            <img id="img_sel" th:src="${filepath} + ${fileDetail.fileStreCours} + '\\' + ${fileDetail.streFileNm} + '?postfix=16178140247137623.259064504908'" style="width: 132px;height: 132px;" class="w2image ">
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${aemPrtcpntSymptmsVO.symptmsRegtypeCode} == '120'" >
+                        <th:block th:each="fileDetail : ${fileDetailList}">
+                            <video xmlns="http://www.w3.org/1999/xhtml" controls="controls" style="width: 90%;height: 132px;" id="video_sel" th:src="${filepath} + ${fileDetail.fileStreCours} + '\\' + ${fileDetail.streFileNm}"></video>
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${aemPrtcpntSymptmsVO.symptmsRegtypeCode} == '130'" >
+                        <th:block th:each="fileDetail : ${fileDetailList}">
+                            <audio xmlns="http://www.w3.org/1999/xhtml" controls="controls" style="width: 90%;height: 85px;" id="audio_sel" th:src="${filepath} + ${fileDetail.fileStreCours} + '\\' + ${fileDetail.streFileNm}"></audio>
+                        </th:block>
+                    </th:block>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    </form>
+</th:block>
+
+
+
+<script>
+    $('#symptmsRegistDe').datepicker({
+        format : "yyyy-mm-dd",
+        language : "kr"
+    });
+</script>

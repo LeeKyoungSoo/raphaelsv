@@ -1,0 +1,296 @@
+<table style="width: 100%;">
+    <colgroup>
+        <col style="width:50%;">
+        <col style="width:50%;">
+    </colgroup>
+    <tbody>
+    <tr>
+        <td valign="bottom">
+            <button type="button" id="pcnctcaeUITabOneBtn" class="btn btn-primary" onclick="displayUI(1);"
+                    style="width:100px;border: 1px solid #4273DF;border-radius: 8px 8px 0px 0px;font-size: .875rem;margin-bottom: 1px;">검색</button>
+            <button type="button" id="pcnctcaeUITabTwoBtn" class="btn btn-primary" onclick="displayUI(2);"
+                    style="width:100px;background-color:#858796;border: 1px solid #858796;border-radius: 8px 8px 0px 0px;font-size: .875rem;margin-bottom: 1px;">즐겨찾기</button>
+        </td>
+        <td align="right">
+            <a href="javascript:pcnctcaeHide();" class="btn btn-primary btn-icon-split btn-sm" style="margin-bottom:8px;margin-right:8px">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span><span class="text">닫기</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<hr style="margin-top:-2px;margin-bottom:8px;border: solid 1px #4273DF;">
+<div id="pcnctcaeUITabOne">
+    <table id="cnctcaeUITable" class="tableClass">
+        <colgroup>
+            <col style="width:20%;">
+            <col style="width:30%;">
+            <col style="width:30%;">
+            <col style="width:20%;">
+        </colgroup>
+        <tbody>
+        <tr>
+            <td align="right" colspan="4">
+                <a href="javascript:gradeChoice();" class="btn btn-primary btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span><span class="text">선택</span>
+                </a>
+            </th>
+        </tr>
+        <tr>
+            <th class="tdTextRight"><div>category :</div></th>
+            <td class="tdTextLeft">
+                <select id="pcnctcaeCoList" name="pcnctcaeCoList" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm"
+                    style="width:90%;">
+                    <option value="">------------ 전 체 ------------</option>
+                    <th:block th:each="pcnctcae : ${pcnctcaeVOList}" >
+                        <option th:value="${pcnctcae.ctcaeVer + '|' + pcnctcae.medDraSoc}" th:text="${pcnctcae.medDraSoc}" />
+                    </th:block>
+                </select>
+            </td>
+            <td class="tdTextRight">
+                <input type="text" id="pcnctinput" name="pcnctinput" class="form-control form-control-sm dis_inline" style="width:90%;">
+            </td>
+            <td class="tdTextRight">
+                <a href="javascript:PcnctcaeListDataChange();" class="btn btn-primary btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-search fa-sm"></i>
+                    </span><span class="text">검색</span>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="pcnctcaeTowView" style="margin-top:12px;width:100%;display: none">
+        <table class="table table-bordered" id="pcnctcaeList"  cellspacing="0"  style="width:100%;font-size:12px;"></table>
+    </div>
+
+    <div id="pcnctcaeGradeView" style="margin-top:12px;width:100%;display:none">
+        <table id="pcnctcaeGradeTable" class="table table-bordered display nowrap">
+            <colgroup>
+                <col style="width:20%;">
+                <col style="width:80%;">
+            </colgroup>
+            <tbody>
+            <tr>
+                <th class="tdTextCenter"><div>Grade</div></th>
+                <th class="tdTextCenter"><div>Description</div></th>
+            </tr>
+            <tr id="pcnctcaeGrade_1_ui" style="cursor:pointer" onclick="pcnctcaeGradeChoice(1, this);">
+                <td class="tdTextCenter"><div>1</div></td>
+                <td class="tdTextLeft"><div id="pcnctcaeGrade_1"></div></td>
+            </tr>
+            <tr id="pcnctcaeGrade_2_ui" style="cursor:pointer" onclick="pcnctcaeGradeChoice(2, this);">
+                <td class="tdTextCenter"><div>2</div></td>
+                <td class="tdTextLeft"><div id="pcnctcaeGrade_2"></div></td>
+            </tr>
+            <tr id="pcnctcaeGrade_3_ui" style="cursor:pointer" onclick="pcnctcaeGradeChoice(3, this);">
+                <td class="tdTextCenter"><div>3</div></td>
+                <td class="tdTextLeft"><div id="pcnctcaeGrade_3"></div></td>
+            </tr>
+            <tr id="pcnctcaeGrade_4_ui" style="cursor:pointer" onclick="pcnctcaeGradeChoice(4, this);">
+                <td class="tdTextCenter"><div>4</div></td>
+                <td class="tdTextLeft"><div id="pcnctcaeGrade_4"></div></td>
+            </tr>
+            <tr id="pcnctcaeGrade_5_ui" style="cursor:pointer" onclick="pcnctcaeGradeChoice(5, this);">
+                <td class="tdTextCenter"><div>5</div></td>
+                <td class="tdTextLeft"><div id="pcnctcaeGrade_5"></div></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="pcnctcaeUITabTwo" style="margin-top:20px;display: none">
+    <th:block th:each="aeFavoriteRow, num : ${aeFavoriteList}" >
+        <input type="hidden" th:id="${'aeTabRow_' + num.count}" th:value="${aeFavoriteRow.aeFavoriteVo.medDraCode + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.aeTremNm + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.aeGrade + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeAt + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeDeath + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeLifeThrt + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeHsptlzNeed + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeCsmalfnc + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeCsdeform + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.saeEtcSittn + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.causalityCode + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.predictAt + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.aeActionCode + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.etcActionCode + '|'
+                                                                + aeFavoriteRow.aeFavoriteVo.aeRsltCode }"/>
+        <div style="padding-top:4px;padding-bottom:4px;cursor:pointer;"  th:onclick="|javascript:allChoiseSend('${num.count}')|">
+            ●
+            <span class="aeTree">
+                [[${aeFavoriteRow.aeTremNm}]] |
+                [[${aeFavoriteRow.aeGrade}]] |
+                [[${aeFavoriteRow.saeAt}]] |
+                [[${aeFavoriteRow.saeDeath}]] |
+                [[${aeFavoriteRow.saeLifeThrt}]] |
+                [[${aeFavoriteRow.saeHsptlzNeed}]] |
+                [[${aeFavoriteRow.saeCsmalfnc}]] |
+                [[${aeFavoriteRow.saeCsdeform}]] |
+                [[${aeFavoriteRow.saeEtcSittn}]] |
+                [[${aeFavoriteRow.causalityCode}]] |
+                [[${aeFavoriteRow.predictAt}]] |
+                [[${aeFavoriteRow.aeActionCode}]] |
+                [[${aeFavoriteRow.etcActionCode}]] |
+                [[${aeFavoriteRow.aeRsltCode}]]
+            </span>
+        </div>
+    </th:block>
+</div>
+
+<script>
+    var gCtcaeVer;
+    var gMedDraCode;
+    var gMedDraSoc;
+    var gTerm;
+    var gGrade;
+    var gGrade_Lv;
+
+    $('#pcnctcaeList').DataTable({
+        scrollY: "176px",
+        scrollCollapse: true,
+        paging: true,
+        bFilter:false,
+        bPaginate:false,
+        bLengthChange:false,
+        columns: [
+            {
+                "title": "Adverse Event",
+                "width": "40%"
+            },
+            {
+                "title": "MedDRA Code",
+                "width": "20%"
+            },
+            {
+                "title": "Category",
+                "width": "40%"
+            }
+        ],
+        columnDefs: [
+            {
+                "targets": [3],
+                "visible": false
+            }
+        ],
+        responsive: true,
+        bInfo: false
+    });
+
+    $('#pcnctcaeList tbody').on('click', 'tr', function () {
+        var data = $('#pcnctcaeList').DataTable().row( this ).data();
+
+        $("#pcnctcaeList tr").not(this).removeClass('selected');
+        $(this).addClass('selected');
+
+        pcnctcaeGradeData(data[3], data[1]);
+    });
+
+    function  displayUI(code) {
+        if ( code == 1 ) {
+            $('#pcnctcaeUITabOne').show();
+            $('#pcnctcaeUITabTwo').hide();
+            $("#pcnctcaeUITabOneBtn").css("background-color", "#4273DF");
+            $("#pcnctcaeUITabOneBtn").css("border", "1px solid #4273DF");
+            $("#pcnctcaeUITabTwoBtn").css("background-color", "#858796");
+            $("#pcnctcaeUITabTwoBtn").css("border", "1px solid #858796");
+
+        } else {
+            $('#pcnctcaeUITabOne').hide();
+            $('#pcnctcaeUITabTwo').show();
+            $("#pcnctcaeUITabOneBtn").css("background-color", "#858796");
+            $("#pcnctcaeUITabOneBtn").css("border", "1px solid #858796");
+            $("#pcnctcaeUITabTwoBtn").css("background-color", "#4273DF");
+            $("#pcnctcaeUITabTwoBtn").css("border", "1px solid #4273DF");
+        }
+    }
+
+    function  pcnctcaeGradeData(ctcaeVer, medDraCode) {
+        console.log("pcnctcaeGradeData-ctcaeVer : " + ctcaeVer);
+        console.log("pcnctcaeGradeData-medDraCode : " + medDraCode);
+
+        $("#pcnctcaeGrade_1_ui").show();
+        $("#pcnctcaeGrade_2_ui").show();
+        $("#pcnctcaeGrade_3_ui").show();
+        $("#pcnctcaeGrade_4_ui").show();
+        $("#pcnctcaeGrade_5_ui").show();
+
+        $.ajax({
+            url:'[[@{/aemonitorapi/pcnctcaeGrade}]]',
+            type:'get',
+            dataType: 'json',
+            data:{
+                ctcaeVer : ctcaeVer,
+                medDraCode : medDraCode,
+                [[${_csrf.parameterName}]] : '[[${_csrf.token}]]'
+            },
+            success:function(data){
+                gCtcaeVer = data.ctcaeVer;
+                gMedDraCode = data.medDraCode;
+                gMedDraSoc = data.medDraSoc;
+                gTerm = data.term;
+                if (data.grade1.trim() == "-" ) $("#pcnctcaeGrade_1_ui").hide();
+                if (data.grade2.trim() == "-" ) $("#pcnctcaeGrade_2_ui").hide();
+                if (data.grade3.trim() == "-" ) $("#pcnctcaeGrade_3_ui").hide();
+                if (data.grade4.trim() == "-" ) $("#pcnctcaeGrade_4_ui").hide();
+                if (data.grade5.trim() == "-" ) $("#pcnctcaeGrade_5_ui").hide();
+                $("#pcnctcaeGrade_1").html(data.grade1);
+                $("#pcnctcaeGrade_2").html(data.grade2);
+                $("#pcnctcaeGrade_3").html(data.grade3);
+                $("#pcnctcaeGrade_4").html(data.grade4);
+                $("#pcnctcaeGrade_5").html(data.grade5);
+                $("#pcnctcaeGradeView").show();
+                gGrade_Lv = "";
+            }
+        });
+    }
+
+    function pcnctcaeGradeChoice(code, _this) {
+        gGrade_Lv = code;
+        console.log("pcnctcaeGradeChoice-gGrade_Lv : " + gGrade_Lv);
+        gGrade = $("#pcnctcaeGrade_" + code).html();
+        console.log("pcnctcaeGradeChoice-gGrade : " + gGrade);
+
+        $("#pcnctcaeGradeTable tr").not(_this).removeClass('selected');
+        $(_this).addClass('selected');
+    }
+
+    function gradeChoice() {
+        console.log("gradeChoice-gGrade_Lv : " + gGrade_Lv);
+        if ( gGrade_Lv == "" ) {
+            modal({
+                type: 'warning',
+                title: '주의',
+                text: '선택된 값이 없습니다.',
+                center: false,
+            });
+        } else {
+            gradeChoiceSend(gTerm, gMedDraCode, gGrade_Lv);
+        }
+    }
+
+    function allChoiseSend(code) {
+        var rowData = $("#aeTabRow_" + code).val();
+        var rowColData = rowData.split('|');
+        allRowChoiceSend(rowColData[0]
+            ,rowColData[1]
+            ,rowColData[2]
+            ,rowColData[3]
+            ,rowColData[4]
+            ,rowColData[5]
+            ,rowColData[6]
+            ,rowColData[7]
+            ,rowColData[8]
+            ,rowColData[9]
+            ,rowColData[10]
+            ,rowColData[11]
+            ,rowColData[12]
+            ,rowColData[13]
+            ,rowColData[14]);
+    }
+</script>
