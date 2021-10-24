@@ -1,3 +1,4 @@
+/*
 @media screen and (min-width: 1580px) {
     .rightLayout {
         float:right;
@@ -11,8 +12,9 @@
         float: right;
     }
 }
+*/
 
-@media screen and (min-width: 1024px) and (max-width: 1580px)  {
+/*@media screen and (min-width: 1024px) and (max-width: 1580px)  {
     .rightLayout {
         float:right;
         width:50%;
@@ -30,8 +32,9 @@
     .hig-bt-pix {
         margin-top : 4px;
     }
-}
-@media only screen and (min-width: 768px) and (max-width: 1024px)  {
+}*/
+
+/*@media only screen and (min-width: 768px) and (max-width: 1024px)  {
     .rightLayout {
         width: 100%;
     }
@@ -47,7 +50,9 @@
     .hig-bt-pix {
         margin-top : 4px;
     }
-}
+}*/
+
+/*
 @media only screen and (max-width: 940px)  {
     .rightLayout {
         width: 100%;
@@ -68,6 +73,9 @@
         margin-top : 4px;
     }
 }
+*/
+
+/*
 @media only screen and (max-width: 768px)  {
     .rightLayout {
         width: 100%;
@@ -88,3 +96,4 @@
         margin-top : 4px;
     }
 }
+*/
