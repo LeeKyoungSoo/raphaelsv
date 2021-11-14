@@ -13,9 +13,21 @@ public class ProductVO extends CommonVO {
     private String iclass;
     private String ingnm;
     private String phacd;
-    private String useyn;
+    private String useYn;
     private String regid;
     private String regdt;
     private String modid;
     private String moddt;
+    private String prdnm;
+
+    private String s_ingcd;
+    private String s_iclass;
+    private String s_ingnm;
+    private String s_phacd;
+    private String s_useYn;
+    private String s_prdnm;
+
+    private String phanm;
+    private String s_phanm;
+    private String capacity;
 }

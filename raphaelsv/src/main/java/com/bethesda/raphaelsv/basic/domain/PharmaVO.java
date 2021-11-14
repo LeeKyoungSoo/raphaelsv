@@ -11,9 +11,13 @@ import lombok.ToString;
 public class PharmaVO extends CommonVO {
     private String phacd;
     private String phanm;
-    private String useyn;
+    private String useYn;
     private String regid;
     private String regdt;
     private String modid;
     private String moddt;
+
+    private String s_phacd;
+    private String s_phanm;
+    private String s_useYn;
 }

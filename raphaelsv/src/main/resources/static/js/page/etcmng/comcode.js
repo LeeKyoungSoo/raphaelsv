@@ -99,7 +99,7 @@ let Comcode = {
         $("#comNm").val(data[1]);
         $("#mstCd").val(data[2]);
         $("#odNo").val(data[3]);
-        $("#useYn").val(data[4]).attr("selected", "selected");
+        $("#useYn").val(data[4]).prop("selected", true);
         $("#comCdView").html(data[0]);
 
         $("#mstCd").attr("readonly", true);
@@ -115,7 +115,7 @@ let Comcode = {
         $("#comNm").val("");
         $("#mstCd").val("");
         $("#odNo").val("");
-        $("#useYn option:eq(0)").attr("selected", "selected");
+        $("#useYn option:eq('')").prop("selected", true);
         $("#comCdView").empty();
 
         $("#mstCd").attr("readonly", false);
@@ -219,7 +219,7 @@ let Comcode = {
     },
 
     createKey : function () {
-        return "cc" + Util.getToday();
+        return "CC" + Util.getToday();
     },
 
     validation : function () {

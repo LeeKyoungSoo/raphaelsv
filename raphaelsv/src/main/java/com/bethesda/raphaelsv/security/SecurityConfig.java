@@ -47,14 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
         http.authorizeRequests()
-                .antMatchers("/pharma/**","/etcmng/**")
+                .antMatchers("/basic/**","/etcmng/**", "/incom/**")
                 .hasRole("M");
 
         http.authorizeRequests()
                 .and()
                 .formLogin()
                 .loginPage("/accounts/login")
-                .defaultSuccessUrl("/pharma/ingredient");
+                .defaultSuccessUrl("/incom/incomjego");
 
         http.authorizeRequests()
                 .and()
@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("/accounts/logout")
-                .logoutSuccessUrl("/memberSpace/sub01")
+                .logoutSuccessUrl("/incom/incomjego")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "SOME", "OTHER", "COOKIES");
 

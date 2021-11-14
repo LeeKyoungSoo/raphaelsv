@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bethesda.raphaelsv.incom.mapper.Support">
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.incom.domain.SupportVO" resultType="com.bethesda.raphaelsv.incom.domain.SupportVO">
+        <![CDATA[
+        /* Support.getDataList */
+        SELECT
+             A.gubun
+            ,A.ingcd
+            ,A.iclass
+            ,A.ingnm
+            ,A.phacd
+            ,A.prdnm
+            ,B.phanm
+            ,C.capacity
+            ,A.supcd
+            ,A.jango
+            ,A.reqcnt
+            ,A.deccnt
+            ,A.decyn
+            ,A.regid
+            ,DATE_FORMAT(A.regdt, '%Y-%m-%d') AS regdt
+            ,A.modid
+            ,DATE_FORMAT(A.moddt, '%Y-%m-%d') AS moddt
+        FROM tb_support A
+            LEFT JOIN tb_pharma B ON B.phacd = A.phacd
+            LEFT JOIN tb_ingredient C ON C.ingcd = A.ingcd AND C.iclass = A.iclass AND C.ingnm = A.ingnm
+        WHERE 1 = 1
+        ]]>
+        <if test='s_gubun != null and !s_gubun.equals("")'>
+            AND A.gubun = #{s_gubun}
+        </if>
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND A.ingcd = #{s_ingcd}
+        </if>
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND A.iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND A.ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_prdnm != null and !s_prdnm.equals("")'>
+            AND A.prdnm LIKE CONCAT('%', #{s_prdnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND A.phacd = #{s_phacd}
+        </if>
+        <if test='s_decyn != null and !s_decyn.equals("")'>
+            AND A.decyn = #{s_decyn}
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND DATE_FORMAT(A.regdt, '%Y%m%d')
+            BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
+            AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
+        </if>
+        ORDER BY supcd DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.incom.domain.SupportVO">
+        <![CDATA[
+        /* Support.insData */
+        INSERT INTO tb_support
+        (
+             gubun
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,supcd
+            ,jango
+            ,reqcnt
+            ,deccnt
+            ,decyn
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+        (
+             #{gubun}
+            ,#{ingcd}
+            ,#{iclass}
+            ,#{ingnm}
+            ,#{phacd}
+            ,#{prdnm}
+            ,#{supcd}
+            ,#{jango}
+            ,#{reqcnt}
+            ,#{deccnt}
+            ,#{decyn}
+            ,#{regid}
+            ,now()
+            ,#{modid}
+            ,now()
+        )
+        ON DUPLICATE KEY
+        UPDATE
+            jango = #{jango}
+            ,reqcnt = #{reqcnt}
+            ,deccnt = #{deccnt}
+            ,decyn = #{decyn}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <update id="udtDeccnt" parameterType="com.bethesda.raphaelsv.incom.domain.SupportVO">
+        <![CDATA[
+        /* Support.udtDeccnt */
+        UPDATE tb_support
+        SET deccnt = #{deccnt}
+        WHERE supcd = #{supcd}
+        ]]>
+    </update>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.incom.domain.SupportVO">
+        <![CDATA[
+        /* Support.delData */
+        DELETE FROM tb_support
+        WHERE supcd = #{supcd}
+        ]]>
+    </delete>
+
+</mapper>

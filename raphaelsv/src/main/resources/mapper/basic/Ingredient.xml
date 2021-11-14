@@ -2,43 +2,129 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bethesda.raphaelsv.basic.mapper.Ingredient">
-    <select id="getDataCnt" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="int">
+    <select id="getIclassList" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
         <![CDATA[
-        /* Users.getDataCnt */
-        SELECT count(*) as cnt
-        FROM tb_member
-        WHERE 1 = 1
+        /* Ingredient.getDataList */
+        SELECT iclass
+        FROM tb_ingredient
+        WHERE useyn = 'Y'
+        GROUP BY iclass
+        ORDER BY iclass
         ]]>
-        <if test='searchValue != null and !searchValue.equals("")'>
-            AND (
-            usernm LIKE CONCAT('%', #{searchValue}, '%')
-            OR userid LIKE CONCAT('%', #{searchValue}, '%')
-            )
+    </select>
+
+    <select id="getIngcdList" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
+        <![CDATA[
+        /* Ingredient.getDataList */
+        SELECT ingcd
+        FROM tb_ingredient
+        WHERE useyn = 'Y'
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND iclass = #{iclass}
         </if>
+        GROUP BY ingcd
+        ORDER BY ingcd
+    </select>
+
+    <select id="getIngnmList" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
+        <![CDATA[
+        /* Ingredient.getDataList */
+        SELECT ingnm
+        FROM tb_ingredient
+        WHERE useyn = 'Y'
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND iclass = #{iclass}
+        </if>
+        <if test='ingcd != null and !ingcd.equals("")'>
+            AND ingcd = #{ingcd}
+        </if>
+        GROUP BY ingnm
+        ORDER BY ingnm
     </select>
 
     <select id="getDataList" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO" resultType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
         <![CDATA[
-        /* Users.getDataList */
+        /* Ingredient.getDataList */
         SELECT
-            userid
-            ,pwd
-            ,usernm
-            ,level
+             ingcd
+            ,iclass
+            ,ingnm
+            ,capacity
             ,useyn
-        FROM tb_member
+            ,regid
+            ,DATE_FORMAT(regdt, '%Y-%m-%d') AS regdt
+            ,modid
+            ,DATE_FORMAT(moddt, '%Y-%m-%d') AS moddt
+        FROM tb_ingredient
         WHERE 1 = 1
         ]]>
-        <if test='searchValue != null and !searchValue.equals("")'>
-            AND (
-            usernm LIKE CONCAT('%', #{searchValue}, '%')
-            OR userid LIKE CONCAT('%', #{searchValue}, '%')
-            )
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND ingcd = #{s_ingcd}
         </if>
-        ORDER BY userid DESC
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_capacity != null and !s_capacity.equals("")'>
+            AND capacity LIKE CONCAT('%', #{s_capacity}, '%')
+        </if>
+        <if test='s_useYn != null and !s_useYn.equals("")'>
+            AND useyn = #{s_useYn}
+        </if>
+        ORDER BY iclass, ingcd, ingnm
         <if test='offSet > -1'>
             LIMIT #{offSet}, #{limit}
         </if>
     </select>
-</mapper>
 
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
+        <![CDATA[
+        /* Ingredient.insData */
+        INSERT INTO tb_ingredient
+        (
+             ingcd
+            ,iclass
+            ,ingnm
+            ,capacity
+            ,useyn
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+            (
+                 #{ingcd}
+                ,#{iclass}
+                ,#{ingnm}
+                ,#{capacity}
+                ,#{useYn}
+                ,#{regid}
+                ,now()
+                ,#{modid}
+                ,now()
+            )
+            ON DUPLICATE KEY
+        UPDATE
+             capacity = #{capacity}
+            ,useyn = #{useYn}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.basic.domain.IngredientVO">
+        <![CDATA[
+        /* Ingredient.delData */
+        DELETE FROM tb_ingredient
+        WHERE ingcd = #{ingcd}
+             AND iclass = #{iclass}
+             AND ingnm = #{ingnm}
+        ]]>
+    </delete>
+
+</mapper>

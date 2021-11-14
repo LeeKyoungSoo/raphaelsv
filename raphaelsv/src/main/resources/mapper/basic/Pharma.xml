@@ -2,5 +2,85 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bethesda.raphaelsv.basic.mapper.Pharma">
+    <select id="getPharmaList" parameterType="com.bethesda.raphaelsv.basic.domain.PharmaVO" resultType="com.bethesda.raphaelsv.basic.domain.PharmaVO">
+        <![CDATA[
+        /* Pharma.getDataList */
+        SELECT
+             phacd
+            ,phanm
+        FROM tb_pharma
+        WHERE useyn = 'Y'
+        ORDER BY phanm
+        ]]>
+    </select>
+
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.basic.domain.PharmaVO" resultType="com.bethesda.raphaelsv.basic.domain.PharmaVO">
+        <![CDATA[
+        /* Pharma.getDataList */
+        SELECT
+             phacd
+            ,phanm
+            ,useyn
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        FROM tb_pharma
+        WHERE 1 = 1
+        ]]>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND phacd = #{s_phacd}
+        </if>
+        <if test='s_phanm != null and !s_phanm.equals("")'>
+            AND phanm LIKE CONCAT('%', #{s_phanm}, '%')
+        </if>
+        <if test='s_useYn != null and !s_useYn.equals("")'>
+            AND useyn = #{s_useYn}
+        </if>
+        ORDER BY phanm
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.basic.domain.PharmaVO">
+        <![CDATA[
+        /* Pharma.insData */
+        INSERT INTO tb_pharma
+        (
+             phacd
+            ,phanm
+            ,useyn
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+            (
+                 #{phacd}
+                ,#{phanm}
+                ,#{useYn}
+                ,#{regid}
+                ,now()
+                ,#{modid}
+                ,now()
+            )
+            ON DUPLICATE KEY
+        UPDATE
+             phanm = #{phanm}
+            ,useyn = #{useYn}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.basic.domain.PharmaVO">
+        <![CDATA[
+        /* Pharma.delData */
+        DELETE FROM tb_pharma
+        WHERE phacd = #{phacd}
+        ]]>
+    </delete>
 
 </mapper>

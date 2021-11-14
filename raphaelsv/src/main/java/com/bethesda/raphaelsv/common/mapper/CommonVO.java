@@ -15,4 +15,6 @@ public class CommonVO {
     private int totalCount;
 
     private String searchValue;
+    private String stdt;
+    private String endt;
 }

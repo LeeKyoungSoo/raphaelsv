@@ -14,7 +14,21 @@ public class BasicController {
     @RequestMapping(value = "/ingredient")
     public ModelAndView goIngredient(HttpServletRequest request) throws Exception {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("content/pharma/ingredient.html");
+        mav.setViewName("content/basic/ingredient.html");
+        return mav;
+    }
+
+    @RequestMapping(value = "/pharma")
+    public ModelAndView goPharma(HttpServletRequest request) throws Exception {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("content/basic/pharma.html");
+        return mav;
+    }
+
+    @RequestMapping(value = "/product")
+    public ModelAndView goProduct(HttpServletRequest request) throws Exception {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("content/basic/product.html");
         return mav;
     }
 }

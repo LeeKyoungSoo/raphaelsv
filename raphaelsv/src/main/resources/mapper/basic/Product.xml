@@ -2,5 +2,181 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bethesda.raphaelsv.basic.mapper.Product">
+    <select id="getIclassList" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO" resultType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.getIclassList */
+        SELECT iclass
+        FROM tb_product
+        WHERE useyn = 'Y'
+        GROUP BY iclass
+        ORDER BY iclass
+        ]]>
+    </select>
+
+    <select id="getIngcdList" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO" resultType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.getIngcdList */
+        SELECT ingcd
+        FROM tb_product
+        WHERE useyn = 'Y'
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND iclass = #{iclass}
+        </if>
+        GROUP BY ingcd
+        ORDER BY ingcd
+    </select>
+
+    <select id="getIngnmList" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO" resultType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.getIngnmList */
+        SELECT ingnm
+        FROM tb_product
+        WHERE useyn = 'Y'
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND iclass = #{iclass}
+        </if>
+        <if test='ingcd != null and !ingcd.equals("")'>
+            AND ingcd = #{ingcd}
+        </if>
+        GROUP BY ingnm
+        ORDER BY ingnm
+    </select>
+
+    <select id="getPhacdList" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO" resultType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.getPhacdList */
+        SELECT A.phacd, B.phanm
+        FROM tb_product A
+            LEFT JOIN tb_pharma B ON B.phacd = A.phacd
+        WHERE A.useyn = 'Y'
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND A.iclass = #{iclass}
+        </if>
+        <if test='ingcd != null and !ingcd.equals("")'>
+            AND A.ingcd = #{ingcd}
+        </if>
+        <if test='ingnm != null and !ingnm.equals("")'>
+            AND A.ingnm = #{ingnm}
+        </if>
+        GROUP BY A.phacd, B.phanm
+        ORDER BY B.phanm, A.phacd
+    </select>
+
+    <select id="getPrdnmList" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO" resultType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.getPhacdList */
+        SELECT prdnm
+        FROM tb_product
+        WHERE useyn = 'Y'
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND iclass = #{iclass}
+        </if>
+        <if test='ingcd != null and !ingcd.equals("")'>
+            AND ingcd = #{ingcd}
+        </if>
+        <if test='ingnm != null and !ingnm.equals("")'>
+            AND ingnm = #{ingnm}
+        </if>
+        <if test='phacd != null and !phacd.equals("")'>
+            AND phacd = #{phacd}
+        </if>
+        GROUP BY prdnm
+        ORDER BY prdnm
+    </select>
+
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO" resultType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.getDataList */
+        SELECT
+             A.ingcd
+            ,A.iclass
+            ,A.ingnm
+            ,A.phacd
+            ,B.phanm
+            ,C.capacity
+            ,A.prdnm
+            ,A.useyn
+            ,A.regid
+            ,DATE_FORMAT(A.regdt, '%Y-%m-%d') AS regdt
+            ,A.modid
+            ,DATE_FORMAT(A.moddt, '%Y-%m-%d') AS moddt
+        FROM tb_product A
+            LEFT JOIN tb_pharma B ON B.phacd = A.phacd
+            LEFT JOIN tb_ingredient C ON C.ingcd = A.ingcd AND C.iclass = A.iclass AND C.ingnm = A.ingnm
+        WHERE 1 = 1
+        ]]>
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND A.ingcd = #{s_ingcd}
+        </if>
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND A.iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND A.ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND A.phacd = #{s_phacd}
+        </if>
+        <if test='s_useYn != null and !s_useYn.equals("")'>
+            AND A.useyn = #{s_useYn}
+        </if>
+        ORDER BY A.iclass, A.ingcd, A.ingnm
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.insData */
+        INSERT INTO tb_product
+        (
+            ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,useyn
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+            (
+                #{ingcd}
+                ,#{iclass}
+                ,#{ingnm}
+                ,#{phacd}
+                ,#{prdnm}
+                ,#{useYn}
+                ,#{regid}
+                ,now()
+                ,#{modid}
+                ,now()
+            )
+            ON DUPLICATE KEY
+        UPDATE
+             useyn = #{useYn}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.basic.domain.ProductVO">
+        <![CDATA[
+        /* Product.delData */
+        DELETE FROM tb_product
+        WHERE ingcd = #{ingcd}
+          AND iclass = #{iclass}
+          AND ingnm = #{ingnm}
+          AND phacd = #{phacd}
+          AND prdnm = #{prdnm}
+        ]]>
+    </delete>
 
 </mapper>

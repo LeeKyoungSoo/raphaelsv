@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bethesda.raphaelsv.incom.mapper.Abrogation">
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.incom.domain.AbrogationVO" resultType="com.bethesda.raphaelsv.incom.domain.AbrogationVO">
+        <![CDATA[
+        /* Abrogation.getDataList */
+        SELECT
+             abrcd
+            ,incomcd
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,phanm
+            ,capacity
+            ,expdt
+            ,abrcnt
+            ,bigo
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+            ,incomregdt
+            ,incomstd
+            ,incomcnt
+            ,incomstdcnt
+            ,gubun
+            ,supcd
+            ,relcnt
+        FROM view_abrogation
+        WHERE 1 = 1
+        ]]>
+        <if test='s_abrcd != null and !s_abrcd.equals("")'>
+            AND abrcd = #{s_abrcd}
+        </if>
+        <if test='s_incomcd != null and !s_incomcd.equals("")'>
+            AND incomcd = #{s_incomcd}
+        </if>
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND ingcd = #{s_ingcd}
+        </if>
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_prdnm != null and !s_prdnm.equals("")'>
+            AND prdnm LIKE CONCAT('%', #{s_prdnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND phacd = #{s_phacd}
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND DATE_FORMAT(regdt, '%Y%m%d')
+            BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
+            AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
+        </if>
+        ORDER BY abrcd DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.incom.domain.AbrogationVO">
+        <![CDATA[
+        /* Abrogation.insData */
+        INSERT INTO tb_abrogation
+        (
+             abrcd
+            ,incomcd
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,expdt
+            ,abrcnt
+            ,bigo
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+        (
+             #{abrcd}
+            ,#{incomcd}
+            ,#{ingcd}
+            ,#{iclass}
+            ,#{ingnm}
+            ,#{phacd}
+            ,#{prdnm}
+            ,#{expdt}
+            ,#{abrcnt}
+            ,#{bigo}
+            ,#{regid}
+            ,now()
+            ,#{modid}
+            ,now()
+        )
+        ON DUPLICATE KEY
+        UPDATE
+             abrcnt = #{abrcnt}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.incom.domain.AbrogationVO">
+        <![CDATA[
+        /* Abrogation.delData */
+        DELETE FROM tb_abrogation
+        WHERE abrcd = #{abrcd}
+        ]]>
+        <if test='incomcd != null and !incomcd.equals("")'>
+            OR incomcd = #{incomcd}
+        </if>
+    </delete>
+
+</mapper>

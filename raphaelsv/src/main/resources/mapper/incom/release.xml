@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bethesda.raphaelsv.incom.mapper.Release">
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.incom.domain.ReleaseVO" resultType="com.bethesda.raphaelsv.incom.domain.ReleaseVO">
+        <![CDATA[
+        /* Release.getDataList */
+        SELECT
+             A.relcd
+            ,A.incomcd
+            ,A.ingcd
+            ,A.iclass
+            ,A.ingnm
+            ,A.phacd
+            ,A.prdnm
+            ,B.phanm
+            ,C.capacity
+            ,A.relcnt
+            ,A.bigo
+            ,A.regid
+            ,DATE_FORMAT(A.regdt, '%Y-%m-%d') AS regdt
+            ,A.modid
+            ,DATE_FORMAT(A.moddt, '%Y-%m-%d') AS moddt
+        FROM tb_release A
+            LEFT JOIN tb_pharma B ON B.phacd = A.phacd
+            LEFT JOIN tb_ingredient C ON C.ingcd = A.ingcd AND C.iclass = A.iclass AND C.ingnm = A.ingnm
+        WHERE 1 = 1
+        ]]>
+        <if test='s_relcd != null and !s_relcd.equals("")'>
+            AND A.relcd = #{s_relcd}
+        </if>
+        <if test='s_incomcd != null and !s_incomcd.equals("")'>
+            AND A.incomcd = #{s_incomcd}
+        </if>
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND A.ingcd = #{s_ingcd}
+        </if>
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND A.iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND A.ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_prdnm != null and !s_prdnm.equals("")'>
+            AND A.prdnm LIKE CONCAT('%', #{s_prdnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND A.phacd = #{s_phacd}
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND DATE_FORMAT(A.regdt, '%Y%m%d')
+            BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
+            AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
+        </if>
+        ORDER BY A.relcd DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.incom.domain.ReleaseVO">
+        <![CDATA[
+        /* Release.insData */
+        INSERT INTO tb_release
+        (
+             relcd
+            ,incomcd
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,relcnt
+            ,bigo
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+            (
+                #{relcd}
+                ,#{incomcd}
+                ,#{ingcd}
+                ,#{iclass}
+                ,#{ingnm}
+                ,#{phacd}
+                ,#{prdnm}
+                ,#{relcnt}
+                ,#{bigo}
+                ,#{regid}
+                ,now()
+                ,#{modid}
+                ,now()
+            )
+            ON DUPLICATE KEY
+        UPDATE
+            relcnt = #{relcnt}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.incom.domain.ReleaseVO">
+        <![CDATA[
+        /* Release.delData */
+        DELETE FROM tb_release
+        WHERE relcd = #{relcd}
+        ]]>
+        <if test='incomcd != null and !incomcd.equals("")'>
+            OR incomcd = #{incomcd}
+        </if>
+    </delete>
+
+</mapper>

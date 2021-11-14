@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bethesda.raphaelsv.incom.mapper.Incoming">
+    <select id="getIncomingSupCdList" parameterType="com.bethesda.raphaelsv.incom.domain.IncomingVO" resultType="com.bethesda.raphaelsv.incom.domain.IncomingVO">
+        <![CDATA[
+        /* Incoming.getIncomingSupCdList */
+        SELECT
+             incomcd
+            ,supcd
+            ,DATE_FORMAT(expdt, '%Y-%m-%d') AS expdt
+            ,incomstd
+            ,incomcnt
+            ,incomstdcnt
+        FROM tb_incoming
+        WHERE 1 = 1
+        ]]>
+        <if test='supcd != null and !supcd.equals("")'>
+            AND supcd = #{supcd}
+        </if>
+        ORDER BY incomcd DESC
+    </select>
+
+    <select id="getJegoDataList" parameterType="com.bethesda.raphaelsv.incom.domain.IncomingVO" resultType="com.bethesda.raphaelsv.incom.domain.IncomingVO">
+        <![CDATA[
+        /* Incoming.getJegoDataList */
+        SELECT
+            iclass
+            ,ingcd
+            ,ingnm
+            ,capacity
+            ,phacd
+            ,phanm
+            ,prdnm
+            ,nowcnt
+            ,inccnt
+            ,relcnt
+            ,abrcnt
+            ,incdt
+            ,reldt
+        FROM view_incom_jego
+        WHERE 1 = 1
+        ]]>
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND ingcd = #{s_ingcd}
+        </if>
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_prdnm != null and !s_prdnm.equals("")'>
+            AND prdnm LIKE CONCAT('%', #{s_prdnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND phacd = #{s_phacd}
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND DATE_FORMAT(incdt, '%Y%m%d')
+            BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
+            AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
+        </if>
+        ORDER BY iclass, ingcd DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <select id="getIncomDataList" parameterType="com.bethesda.raphaelsv.incom.domain.IncomingVO" resultType="com.bethesda.raphaelsv.incom.domain.IncomingVO">
+        <![CDATA[
+        /* Incoming.getIncomDataList */
+        SELECT
+             incomcd
+            ,supcd
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,phanm
+            ,capacity
+            ,expdt
+            ,incomstd
+            ,incomcnt
+            ,incomstdcnt
+            ,nowcnt
+            ,bigo
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        FROM view_incoming
+        WHERE nowcnt > 0
+        ]]>
+        <if test='iclass != null and !iclass.equals("")'>
+            AND iclass = #{iclass}
+        </if>
+        <if test='ingcd != null and !ingcd.equals("")'>
+            AND ingcd = #{ingcd}
+        </if>
+        <if test='ingnm != null and !ingnm.equals("")'>
+            AND ingnm = #{ingnm}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_prdnm != null and !s_prdnm.equals("")'>
+            AND prdnm LIKE CONCAT('%', #{s_prdnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND phacd = #{s_phacd}
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND DATE_FORMAT(regdt, '%Y%m%d')
+            BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
+            AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
+        </if>
+        ORDER BY expdt, phanm, prdnm
+    </select>
+
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.incom.domain.IncomingVO" resultType="com.bethesda.raphaelsv.incom.domain.IncomingVO">
+        <![CDATA[
+        /* Incoming.getDataList */
+        SELECT
+             incomcd
+            ,supcd
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,phanm
+            ,capacity
+            ,expdt
+            ,incomstd
+            ,incomcnt
+            ,incomstdcnt
+            ,nowcnt
+            ,bigo
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        FROM view_incoming
+        WHERE 1 = 1
+        ]]>
+        <if test='s_incomcd != null and !s_incomcd.equals("")'>
+            AND incomcd = #{s_incomcd}
+        </if>
+        <if test='s_supcd != null and !s_supcd.equals("")'>
+            AND supcd = #{s_supcd}
+        </if>
+        <if test='s_gubun != null and !s_gubun.equals("")'>
+            AND gubun = #{s_gubun}
+        </if>
+        <if test='s_ingcd != null and !s_ingcd.equals("")'>
+            AND ingcd = #{s_ingcd}
+        </if>
+        <if test='s_iclass != null and !s_iclass.equals("")'>
+            AND iclass = #{s_iclass}
+        </if>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='s_prdnm != null and !s_prdnm.equals("")'>
+            AND prdnm LIKE CONCAT('%', #{s_prdnm}, '%')
+        </if>
+        <if test='s_phacd != null and !s_phacd.equals("")'>
+            AND phacd = #{s_phacd}
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND DATE_FORMAT(regdt, '%Y%m%d')
+            BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
+            AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
+        </if>
+        ORDER BY incomcd DESC, supcd DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+
+    <insert id="insData" parameterType="com.bethesda.raphaelsv.incom.domain.IncomingVO">
+        <![CDATA[
+        /* Incoming.insData */
+        INSERT INTO tb_incoming
+        (
+             incomcd
+            ,supcd
+            ,ingcd
+            ,iclass
+            ,ingnm
+            ,phacd
+            ,prdnm
+            ,expdt
+            ,incomstd
+            ,incomcnt
+            ,incomstdcnt
+            ,nowcnt
+            ,bigo
+            ,regid
+            ,regdt
+            ,modid
+            ,moddt
+        )
+        VALUES
+        (
+             #{incomcd}
+            ,#{supcd}
+            ,#{ingcd}
+            ,#{iclass}
+            ,#{ingnm}
+            ,#{phacd}
+            ,#{prdnm}
+            ,#{expdt}
+            ,#{incomstd}
+            ,#{incomcnt}
+            ,#{incomstdcnt}
+            ,#{nowcnt}
+            ,#{bigo}
+            ,#{regid}
+            ,now()
+            ,#{modid}
+            ,now()
+        )
+        ON DUPLICATE KEY
+        UPDATE
+             expdt = #{expdt}
+            ,incomstd = #{incomstd}
+            ,incomcnt = #{incomcnt}
+            ,incomstdcnt = #{incomstdcnt}
+            ,modid = #{modid}
+            ,moddt = #{moddt}
+        ]]>
+    </insert>
+
+    <delete id="delData" parameterType="com.bethesda.raphaelsv.incom.domain.IncomingVO">
+        <![CDATA[
+        /* Incoming.delData */
+        DELETE FROM tb_incoming
+        WHERE incomcd = #{incomcd}
+        ]]>
+        <if test='supcd != null and !supcd.equals("")'>
+            OR supcd = #{supcd}
+        </if>
+    </delete>
+
+</mapper>
