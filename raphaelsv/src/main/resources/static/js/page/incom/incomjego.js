@@ -9,7 +9,8 @@ let Incomjego = {
     },
 
     config : function () {
-
+        $("#stdt").datepicker('setDate', '-3M');
+        $("#endt").datepicker('setDate', 'today');
         return false;
     },
 
@@ -50,6 +51,14 @@ let Incomjego = {
                     "targets": [9],
                     "visible": false,
                     "searchable": false
+                },
+                {
+                    'targets': [7,8],
+                    'className': 'alCenter',
+                },
+                {
+                    'targets': [3,6],
+                    'className': 'alRight',
                 },
             ],
             responsive: true,
@@ -127,10 +136,10 @@ let Incomjego = {
                         '<td class="tdTextCenter">' + rowData[key].phanm + '</td>\n' +
                         '<td class="tdTextCenter">' + rowData[key].prdnm + '</td>\n' +
                         '<td class="tdTextCenter">' + rowData[key].regdt + '</td>\n' +
-                        '<td class="tdTextCenter">' + rowData[key].incomstd + '</td>\n' +
-                        '<td class="tdTextCenter">' + rowData[key].incomcnt + '</td>\n' +
-                        '<td class="tdTextCenter">' + rowData[key].incomstdcnt + '</td>\n' +
-                        '<td class="tdTextCenter">' + rowData[key].nowcnt + '</td>\n' +
+                        '<td class="tdTextRight">' + rowData[key].incomstd + '</td>\n' +
+                        '<td class="tdTextRight">' + rowData[key].incomcnt + '</td>\n' +
+                        '<td class="tdTextRight">' + rowData[key].incomstdcnt + '</td>\n' +
+                        '<td class="tdTextRight">' + rowData[key].nowcnt + '</td>\n' +
                         '<td class="tdTextCenter">' +
                         '   <input type="hidden" name="phacdChk" value="' + rowData[key].phacd + '">' +
                         '   <input type="hidden" name="prdnmChk" value="' + rowData[key].prdnm + '">' +

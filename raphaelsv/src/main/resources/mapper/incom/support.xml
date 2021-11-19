@@ -54,7 +54,7 @@
             BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
             AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
         </if>
-        ORDER BY supcd DESC
+        ORDER BY regdt DESC
         <if test='offSet > -1'>
             LIMIT #{offSet}, #{limit}
         </if>
@@ -106,7 +106,7 @@
             ,deccnt = #{deccnt}
             ,decyn = #{decyn}
             ,modid = #{modid}
-            ,moddt = #{moddt}
+            ,moddt = now()
         ]]>
     </insert>
 

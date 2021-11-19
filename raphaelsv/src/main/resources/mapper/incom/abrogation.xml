@@ -105,7 +105,7 @@
         UPDATE
              abrcnt = #{abrcnt}
             ,modid = #{modid}
-            ,moddt = #{moddt}
+            ,moddt = now()
         ]]>
     </insert>
 

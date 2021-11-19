@@ -62,17 +62,10 @@ let Pharma = {
             // 페이징 기능 숨기기
             paging: true,
             columnDefs: [
-                /*
                 {
-                    "targets": [1],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [2],
+                    'className': 'alCenter',
                 },
-                {
-                    "targets": [2],
-                    "visible": false
-                },
-                */
             ],
             responsive: true,
             bInfo: false,

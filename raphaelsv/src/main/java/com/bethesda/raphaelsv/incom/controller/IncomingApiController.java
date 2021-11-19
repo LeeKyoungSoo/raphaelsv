@@ -20,6 +20,17 @@ public class IncomingApiController {
     @Autowired
     IncomingService incomingService;
 
+    @Autowired
+    SupportService supportService;
+
+    @PostMapping("/jegoDataView")
+    public HashMap goJegoDataView(IncomingVO vo) throws Exception {
+        HashMap resultMap = new HashMap<>();
+        IncomingVO dataView = incomingService.getJegoDataView(vo);
+        resultMap.put("dataView", dataView);
+        return resultMap;
+    }
+
     @PostMapping("/incomingSupCdList")
     public HashMap goIngcdList(IncomingVO vo) throws Exception {
         HashMap resultMap = new HashMap<>();
@@ -84,6 +95,7 @@ public class IncomingApiController {
     public HashMap goDataEdit(IncomingVO vo, Principal principal) throws Exception {
         HashMap resultMap = new HashMap<>();
         int dataState = 0;
+        int incomCount = 0;
 
         vo.setRegid(principal.getName());
         vo.setModid(principal.getName());
@@ -107,10 +119,18 @@ public class IncomingApiController {
                 vo.setIncomstd(arrIncomstd[i].trim());
                 vo.setIncomcnt(arrIncomcnt[i].trim());
                 vo.setIncomstdcnt(arrIncomstdcnt[i].trim());
+                incomCount += Integer.parseInt(arrIncomstdcnt[i].trim());
                 dataState = incomingService.insData(vo);
             }
+
+            SupportVO supportVO = new SupportVO();
+            supportVO.setSupcd(vo.getSupcd());
+            supportVO.setDeccnt(String.valueOf(incomCount));
+            supportService.udtDeccnt(supportVO);
+
         }
         resultMap.put("dataState", dataState);
+        resultMap.put("incomCount", incomCount);
 
         return resultMap;
     }

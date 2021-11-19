@@ -115,6 +115,7 @@ let Support = {
             // 검색 기능 숨기기
             searching: false,
             // 정렬 기능 숨기기
+            order: [[0, 'desc']],
             ordering: true,
             // 정보 표시 숨기기
             info: true,
@@ -122,24 +123,17 @@ let Support = {
             paging: true,
             columnDefs: [
                 {
-                    "targets": [10],
+                    "targets": [10,11,12,13,14],
                     "visible": false,
                     "searchable": false
                 },
                 {
-                    "targets": [11],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [0,9],
+                    'className': 'alCenter',
                 },
                 {
-                    "targets": [12],
-                    "visible": false,
-                    "searchable": false
-                },
-                {
-                    "targets": [13],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [3,6,7,8],
+                    'className': 'alRight',
                 },
             ],
             responsive: true,
@@ -180,7 +174,7 @@ let Support = {
         $('#jango').val(data[6]);
         $('#reqcnt').val(data[7]);
         $('#deccnt').val(data[8]);
-        $("#decyn").val(data[9]).prop("selected", true);
+        $("#decyn").val(data[14]).prop("selected", true);
 
         $("#jango").attr("readonly", true);
         $("#deccnt").attr("readonly", true);
@@ -245,6 +239,12 @@ let Support = {
                 tableGrid.clear().draw();
                 let rowData = data.dataList;
                 $.each(rowData, function (key) {
+                    let state = "";
+                    if ( rowData[key].decyn == "Y") {
+                        state = "입고";
+                    } else {
+                        state =  "신청";
+                    }
                     tableGrid.row.add([
                         rowData[key].regdt,
                         rowData[key].ingcd,
@@ -255,11 +255,12 @@ let Support = {
                         rowData[key].jango,
                         rowData[key].reqcnt,
                         rowData[key].deccnt,
-                        rowData[key].decyn,
+                        state,
                         rowData[key].supcd,
                         rowData[key].gubun,
                         rowData[key].iclass,
                         rowData[key].phacd,
+                        rowData[key].decyn,
                     ]).draw(false);
                 });
             },
@@ -537,8 +538,18 @@ let Support = {
 
     goJangoCount : function (prdnmVal) {
         let param = $("form[name=dataFrm]").serialize();
-        alert("추후에 잔고 가지고 오는 로직 적용");
-        $('#jango').val("40");
+        $.ajax({
+            url: '/incom/incomingApi/jegoDataView',
+            type: 'post',
+            data: param,
+            success: function (data) {
+                let rowData = data.dataView;
+                $('#jango').val(rowData.nowcnt);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
     },
 
     goIncomingView : function()  {
@@ -549,11 +560,12 @@ let Support = {
     },
 
     IncomRowAdd : function()  {
+        let key = $("input[name=incomstd]").length;
         let option = $('<tr><td class="tdTextCenter"><input type="hidden" name="incomcd" value=" "/>' +
             '<input class="input_h" type="text" name="expdt" value=" "/></td>' +
-            '<td class="tdTextCenter"><input class="input_h" type="text" name="incomstd" value="0"/></td>' +
-            '<td class="tdTextCenter"><input class="input_h" type="text" name="incomcnt" value="0"/></td>' +
-            '<td class="tdTextCenter"><input class="input_h" type="text" name="incomstdcnt" value="0"/></td></tr>');
+            '<td class="tdTextCenter"><input class="input_h" type="text" id="incomstd_'+key+'" name="incomstd" onchange="Support.cntInput('+key+');" value="0"/></td>' +
+            '<td class="tdTextCenter"><input class="input_h" type="text" id="incomcnt_'+key+'" name="incomcnt" onchange="Support.cntInput('+key+');" value="0"/></td>' +
+            '<td class="tdTextCenter"><input class="input_h" type="text" id="incomstdcnt_'+key+'" name="incomstdcnt" value="0"/></td></tr>');
         $("#incomingAddList>tbody").append(option);
     },
 
@@ -596,7 +608,9 @@ let Support = {
                     title: 'Success',
                     text: message
                 });
+                $("#deccnt").val(data.incomCount);
                 $("#adMoniModal").hide();
+                Support.goDataList();
             },
             error: function (data) {
                 console.log(data);

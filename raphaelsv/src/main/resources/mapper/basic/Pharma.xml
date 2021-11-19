@@ -71,7 +71,7 @@
              phanm = #{phanm}
             ,useyn = #{useYn}
             ,modid = #{modid}
-            ,moddt = #{moddt}
+            ,moddt = now()
         ]]>
     </insert>
 

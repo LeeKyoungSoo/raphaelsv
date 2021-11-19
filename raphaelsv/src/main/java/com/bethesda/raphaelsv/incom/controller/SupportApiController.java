@@ -62,4 +62,16 @@ public class SupportApiController {
 
         return resultMap;
     }
+
+    @PostMapping("/udtDeccnt")
+    public HashMap goUdtDeccnt(SupportVO vo) throws Exception {
+        HashMap resultMap = new HashMap<>();
+
+        int dataState = supportService.udtDeccnt(vo);
+
+        resultMap.put("dataState", dataState);
+
+        return resultMap;
+    }
+
 }

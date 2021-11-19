@@ -12,4 +12,5 @@ public interface Support {
     int insData(SupportVO vo) throws Exception;
     int delData(SupportVO vo) throws Exception;
     List<SupportVO> getDataList(SupportVO vo) throws Exception;
+    int udtDeccnt(SupportVO vo) throws Exception;
 }

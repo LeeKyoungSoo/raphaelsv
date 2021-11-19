@@ -113,7 +113,7 @@
              capacity = #{capacity}
             ,useyn = #{useYn}
             ,modid = #{modid}
-            ,moddt = #{moddt}
+            ,moddt = now()
         ]]>
     </insert>
 

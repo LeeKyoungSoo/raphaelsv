@@ -9,7 +9,8 @@ let Release = {
     },
 
     config : function () {
-
+        $("#stdt").datepicker('setDate', '-3M');
+        $("#endt").datepicker('setDate', 'today');
         return false;
     },
 
@@ -37,19 +38,17 @@ let Release = {
             paging: true,
             columnDefs: [
                 {
-                    "targets": [8],
+                    "targets": [8,9,10],
                     "visible": false,
                     "searchable": false
                 },
                 {
-                    "targets": [9],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [0],
+                    'className': 'alCenter',
                 },
                 {
-                    "targets": [10],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [3,6],
+                    'className': 'alRight',
                 },
             ],
             responsive: true,

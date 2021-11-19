@@ -9,7 +9,8 @@ let Incoming = {
     },
 
     config : function () {
-
+        $("#stdt").datepicker('setDate', '-3M');
+        $("#endt").datepicker('setDate', 'today');
         return false;
     },
 
@@ -37,24 +38,17 @@ let Incoming = {
             paging: true,
             columnDefs: [
                 {
-                    "targets": [12],
+                    "targets": [12,13,14,15],
                     "visible": false,
                     "searchable": false
                 },
                 {
-                    "targets": [13],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [0,6,11],
+                    'className': 'alCenter',
                 },
                 {
-                    "targets": [14],
-                    "visible": false,
-                    "searchable": false
-                },
-                {
-                    "targets": [15],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [3,7,8,9,10],
+                    'className': 'alRight',
                 },
             ],
             responsive: true,

@@ -26,4 +26,16 @@ let Util = {
 
         return year + month + day + hours + minutes + seconds;
     },
+
+    getYMD : function (gap, fr) {
+        let date = new Date();
+        if ( gap > 0 ) {
+            date = new Date(date.setMonth(date.getMonth() - gap));
+        }
+        let year = date.getFullYear() + "";
+        let month = ("0" + (1 + date.getMonth())).slice(-2);
+        let day = ("0" + date.getDate()).slice(-2);
+
+        return year + fr + month + fr + day;
+    },
 }

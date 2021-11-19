@@ -38,4 +38,8 @@ public class IncomingService {
     public List<IncomingVO> getIncomDataList(IncomingVO vo) throws Exception {
         return incoming.getIncomDataList(vo);
     }
+
+    public IncomingVO getJegoDataView(IncomingVO vo) throws Exception {
+        return incoming.getJegoDataView(vo);
+    }
 }

@@ -67,6 +67,14 @@ let Member = {
                     "visible": false,
                     "searchable": false
                 },
+                {
+                    'targets': [3],
+                    'className': 'alCenter',
+                },
+                {
+                    'targets': [2],
+                    'className': 'alRight',
+                },
             ],
             responsive: true,
             bInfo: false,

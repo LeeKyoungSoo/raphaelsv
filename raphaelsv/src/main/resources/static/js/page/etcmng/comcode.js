@@ -62,17 +62,14 @@ let Comcode = {
             // 페이징 기능 숨기기
             paging: true,
             columnDefs: [
-                /*
                 {
-                    "targets": [1],
-                    "visible": false,
-                    "searchable": false
+                    'targets': [0, 2,4],
+                    'className': 'alCenter',
                 },
                 {
-                    "targets": [2],
-                    "visible": false
+                    'targets': [3],
+                    'className': 'alRight',
                 },
-                */
             ],
             responsive: true,
             bInfo: false,

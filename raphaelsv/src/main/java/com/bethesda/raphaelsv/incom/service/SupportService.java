@@ -26,4 +26,8 @@ public class SupportService {
     public List<SupportVO> getDataList(SupportVO vo) throws Exception {
         return support.getDataList(vo);
     }
+
+    public int udtDeccnt(SupportVO vo) throws Exception {
+        return support.udtDeccnt(vo);
+    }
 }

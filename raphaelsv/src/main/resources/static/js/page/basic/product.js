@@ -78,6 +78,14 @@ let Product = {
                     "visible": false,
                     "searchable": false
                 },
+                {
+                    'targets': [6,8],
+                    'className': 'alCenter',
+                },
+                {
+                    'targets': [3],
+                    'className': 'alRight',
+                },
             ],
             responsive: true,
             bInfo: false,

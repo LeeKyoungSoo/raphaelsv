@@ -16,4 +16,5 @@ public interface Incoming {
     List<IncomingVO> getIncomingSupCdList(IncomingVO vo) throws Exception;
     List<IncomingVO> getJegoDataList(IncomingVO vo) throws Exception;
     List<IncomingVO> getIncomDataList(IncomingVO vo) throws Exception;
+    IncomingVO getJegoDataView(IncomingVO vo) throws Exception;
 }

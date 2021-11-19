@@ -97,7 +97,7 @@
         UPDATE
             relcnt = #{relcnt}
             ,modid = #{modid}
-            ,moddt = #{moddt}
+            ,moddt = now()
         ]]>
     </insert>
 

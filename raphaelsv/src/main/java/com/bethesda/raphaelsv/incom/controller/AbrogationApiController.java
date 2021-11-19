@@ -65,6 +65,39 @@ public class AbrogationApiController {
         return resultMap;
     }
 
+    @PostMapping("/dataEditAbr")
+    public HashMap goDataEditAbr(AbrogationVO vo, Principal principal) throws Exception {
+        HashMap resultMap = new HashMap<>();
+        int dataState = 0;
+
+        vo.setRegid(principal.getName());
+        vo.setModid(principal.getName());
+
+        String[] arrIclass = vo.getIclass().split(",");
+        String[] arrIngcd = vo.getIngcd().split(",");
+        String[] arrIngnm = vo.getIngnm().split(",");
+        String[] arrIncomcd = vo.getIncomcd().split(",");
+        String[] arrIscnt = vo.getIscnt().split(",");
+        String[] arrPhacd = vo.getPhacd().split(",");
+        String[] arrPrdnm = vo.getPrdnm().split(",");
+        for (int i = 0; i < arrIncomcd.length; i++) {
+            vo.setAbrcd(arrIncomcd[i].trim() + String.format("%02d", i));
+            vo.setIclass(arrIclass[i].trim());
+            vo.setIngcd(arrIngcd[i].trim());
+            vo.setIngnm(arrIngnm[i].trim());
+            vo.setIncomcd(arrIncomcd[i].trim());
+            vo.setAbrcnt(arrIscnt[i].trim());
+            vo.setPhacd(arrPhacd[i].trim());
+            vo.setPrdnm(arrPrdnm[i].trim());
+            dataState = abrogationService.insData(vo);
+        }
+        resultMap.put("dataState", dataState);
+
+        return resultMap;
+    }
+
+
+
     @PostMapping("/dataDelete")
     public HashMap goDataDelete(AbrogationVO vo) throws Exception {
         HashMap resultMap = new HashMap<>();
