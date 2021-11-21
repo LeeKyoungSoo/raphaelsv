@@ -44,6 +44,18 @@ let Pharma = {
             Pharma.deleteConfirm();
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Pharma.downloadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/basic/pharmaApi/dataListExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {

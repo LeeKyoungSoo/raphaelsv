@@ -103,6 +103,18 @@ let Support = {
             Support.IncomRowSave();
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Support.downloadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/incom/supportApi/dataListExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {
@@ -115,7 +127,6 @@ let Support = {
             // 검색 기능 숨기기
             searching: false,
             // 정렬 기능 숨기기
-            order: [[0, 'desc']],
             ordering: true,
             // 정보 표시 숨기기
             info: true,
@@ -136,6 +147,7 @@ let Support = {
                     'className': 'alRight',
                 },
             ],
+            order: [[0, 'desc']],
             responsive: true,
             bInfo: false,
             lengthMenu: [20, 40, 60, 80]

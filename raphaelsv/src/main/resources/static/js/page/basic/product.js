@@ -55,6 +55,18 @@ let Product = {
             Product.goIngnmList();
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Product.downloadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/basic/productApi/dataListExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {

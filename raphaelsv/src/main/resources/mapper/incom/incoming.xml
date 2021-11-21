@@ -127,6 +127,12 @@
         <if test='ingnm != null and !ingnm.equals("")'>
             AND ingnm = #{ingnm}
         </if>
+        <if test='phanm != null and !phanm.equals("")'>
+            AND phanm = #{phanm}
+        </if>
+        <if test='prdnm != null and !prdnm.equals("")'>
+            AND prdnm = #{prdnm}
+        </if>
         <if test='s_ingnm != null and !s_ingnm.equals("")'>
             AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
         </if>
@@ -199,7 +205,7 @@
             BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
             AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
         </if>
-        ORDER BY incomcd DESC, supcd DESC
+        ORDER BY regdt DESC, incomcd DESC, supcd DESC
         <if test='offSet > -1'>
             LIMIT #{offSet}, #{limit}
         </if>

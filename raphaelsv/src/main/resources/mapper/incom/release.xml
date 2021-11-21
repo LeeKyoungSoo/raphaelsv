@@ -52,7 +52,7 @@
             BETWEEN DATE_FORMAT(IFNULL(NULLIF(#{stdt},''),'00000000'), '%Y%m%d')
             AND DATE_FORMAT(IFNULL(NULLIF(#{endt},''),'99991231'), '%Y%m%d')
         </if>
-        ORDER BY A.relcd DESC
+        ORDER BY A.regdt DESC
         <if test='offSet > -1'>
             LIMIT #{offSet}, #{limit}
         </if>
@@ -112,4 +112,11 @@
         </if>
     </delete>
 
+    <select id="incomCount" parameterType="com.bethesda.raphaelsv.incom.domain.ReleaseVO" resultType="int">
+        <![CDATA[
+        /* Release.delData */
+        SELECT COUNT(*) AS CNT FROM tb_release
+        WHERE incomcd = #{incomcd}
+        ]]>
+    </select>
 </mapper>

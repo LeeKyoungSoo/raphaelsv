@@ -1,10 +1,11 @@
-package com.bethesda.raphaelsv.basic.controller;
+package com.bethesda.raphaelsv.incom.controller;
 
-import com.bethesda.raphaelsv.basic.domain.IngredientVO;
-import com.bethesda.raphaelsv.basic.domain.PharmaVO;
-import com.bethesda.raphaelsv.basic.service.PharmaService;
-import com.bethesda.raphaelsv.etcmng.domain.ComcodeVO;
-import com.bethesda.raphaelsv.etcmng.service.ComcodeService;
+import com.bethesda.raphaelsv.incom.domain.AttainVO;
+import com.bethesda.raphaelsv.incom.domain.IncomingVO;
+import com.bethesda.raphaelsv.incom.domain.SupportVO;
+import com.bethesda.raphaelsv.incom.service.AttainService;
+import com.bethesda.raphaelsv.incom.service.IncomingService;
+import com.bethesda.raphaelsv.incom.service.SupportService;
 import com.bethesda.raphaelsv.util.DateTimeUtil;
 import com.bethesda.raphaelsv.util.WebUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +30,13 @@ import java.util.Map;
 
 @Log
 @RestController
-@RequestMapping("/basic/pharmaApi")
-public class PharmaApiController {
+@RequestMapping("/incom/attainApi")
+public class AttainApiController {
     @Autowired
-    PharmaService pharmaService;
+    AttainService attainService;
 
     @PostMapping("/dataList")
-    public HashMap goDataList(PharmaVO vo) throws Exception {
+    public HashMap goDataList(AttainVO vo) throws Exception {
         HashMap resultMap = new HashMap<>();
 
         if ( (vo.getPageNum() == null) || vo.getPageNum().equals("") ) {
@@ -49,43 +51,11 @@ public class PharmaApiController {
             vo.setLimit(nLimit);
             vo.setOffSet(nOffSet);
         }
-        List<PharmaVO> dataList = pharmaService.getDataList(vo);
+        List<AttainVO> dataList = attainService.getDataList(vo);
         resultMap.put("dataList", dataList);
 
         return resultMap;
     }
-
-    @PostMapping("/pharmaList")
-    public HashMap goPharmaList(PharmaVO vo) throws Exception {
-        HashMap resultMap = new HashMap<>();
-        List<PharmaVO> dataList = pharmaService.getPharmaList(vo);
-        resultMap.put("dataList", dataList);
-
-        return resultMap;
-    }
-
-    @PostMapping("/dataEdit")
-    public HashMap goDataEdit(PharmaVO vo) throws Exception {
-        HashMap resultMap = new HashMap<>();
-
-        int dataState = pharmaService.insData(vo);
-
-        resultMap.put("dataState", dataState);
-
-        return resultMap;
-    }
-
-    @PostMapping("/dataDelete")
-    public HashMap goDataDelete(PharmaVO vo) throws Exception {
-        HashMap resultMap = new HashMap<>();
-
-        int dataState = pharmaService.delData(vo);
-
-        resultMap.put("dataState", dataState);
-
-        return resultMap;
-    }
-
 
     private static String OS = System.getProperty("os.name").toLowerCase();
     private static final String TAG_USER = "METADATA";
@@ -97,8 +67,8 @@ public class PharmaApiController {
     private String fileDownPathLinux;
 
     @PostMapping("/dataListExcel")
-    public void goDataDownloadExcel(PharmaVO vo) throws Exception {
-        String metaPath = "Pharma";
+    public void goDataDownloadExcel(AttainVO vo) throws Exception {
+        String metaPath = "Attain";
         String fileDownPath = OS.contains("win") ? fileDownPathWin : fileDownPathLinux;
         String filePath = new StringBuffer()
                 .append(fileDownPath).append(File.separator)
@@ -144,13 +114,25 @@ public class PharmaApiController {
             List<String> header = new ArrayList<String>();
             List<String> dataKeys = new ArrayList<String>();
 
-            header.add("제약사코드");
-            header.add("제약사명");
-            header.add("사용여부");
+            header.add("분류");
+            header.add("코드");
+            header.add("성분명");
+            header.add("용량");
+            header.add("잔고");
+            header.add("월사용량");
+            header.add("비축목표량");
+            header.add("달성률");
+            header.add("신청량");
 
-            dataKeys.add("phacd");
-            dataKeys.add("phanm");
-            dataKeys.add("useYn");
+            dataKeys.add("iclass");
+            dataKeys.add("ingcd");
+            dataKeys.add("ingnm");
+            dataKeys.add("capacity");
+            dataKeys.add("nowcnt");
+            dataKeys.add("moncnt");
+            dataKeys.add("flgcnt");
+            dataKeys.add("flgpercentval");
+            dataKeys.add("reqcnt");
 
             row = sheet.createRow(rowIdx++);
             for (int i = 0; i < header.size(); i++) {
@@ -176,7 +158,7 @@ public class PharmaApiController {
             soFont.setStrikeout(true);
             soStyle.setFont(soFont);
 
-            List<PharmaVO> dataList = pharmaService.getDataList(vo);
+            List<AttainVO> dataList = attainService.getDataList(vo);
 
             if (dataList.size() > 100000) {
                 row = sheet.createRow(rowIdx++);
@@ -185,7 +167,7 @@ public class PharmaApiController {
                 cell.setCellValue("검색된 데이타가 10만건이 넘었습니다. 검색 범위를 재설정하시거나 관리자에게 문의하세요.");
                 cell.setCellStyle(dataStyle);
             } else {
-                for (PharmaVO excelRowData : dataList) {
+                for (AttainVO excelRowData : dataList) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Map result = objectMapper.convertValue(excelRowData, Map.class);
                     row = sheet.createRow(rowIdx++);

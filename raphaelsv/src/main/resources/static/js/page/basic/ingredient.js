@@ -44,6 +44,18 @@ let Ingredient = {
             Ingredient.deleteConfirm();
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Ingredient.downloadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/basic/ingredientApi/dataListExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bethesda.raphaelsv.incom.mapper.Attain">
+    <select id="getDataList" parameterType="com.bethesda.raphaelsv.incom.domain.AttainVO" resultType="com.bethesda.raphaelsv.incom.domain.AttainVO">
+        <![CDATA[
+        /* Attain.getDataList */
+         SELECT
+             iclass
+            ,ingcd
+            ,ingnm
+            ,capacity
+            ,relcnt
+            ,nowcnt
+            ,reqcnt
+            ,moncnt
+            ,flgcnt
+            ,flgpercent
+            ,flgpercentval
+        FROM view_attain
+        WHERE 1 = 1
+        ]]>
+        <if test='s_ingnm != null and !s_ingnm.equals("")'>
+            AND ingnm LIKE CONCAT('%', #{s_ingnm}, '%')
+        </if>
+        <if test='(stdt != null and !stdt.equals("")) and (endt != null and !endt.equals(""))'>
+            AND flgpercent
+            BETWEEN #{stdt}
+            AND #{endt}
+        </if>
+        ORDER BY iclass, ingcd DESC
+        <if test='offSet > -1'>
+            LIMIT #{offSet}, #{limit}
+        </if>
+    </select>
+</mapper>

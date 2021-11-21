@@ -95,7 +95,6 @@ let Abrogation = {
             // 검색 기능 숨기기
             searching: false,
             // 정렬 기능 숨기기
-            order: [[0, 'desc']],
             ordering: true,
             // 정보 표시 숨기기
             info: true,
@@ -116,6 +115,7 @@ let Abrogation = {
                     "searchable": false
                 },
             ],
+            order: [[0, 'desc']],
             responsive: true,
             bInfo: false,
             lengthMenu: [20, 40, 60, 80]
@@ -128,6 +128,29 @@ let Abrogation = {
             console.log(data);
             Abrogation.ViewData(data);
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Abrogation.downloadExcel(1);
+            return false;
+        });
+
+        $("#t_excelBtn").on("click", function(ev) {
+            Abrogation.downloadExcel(2);
+            return false;
+        });
+    },
+
+    downloadExcel : function (code) {
+        let url = '';
+        if ( code == 1 ) { //폐기이력
+            url = '/incom/abrogationApi/dataListExcel';
+        } else {    //폐기처리
+            url = '/incom/incomingApi/incomDataExcel';
+        }
+
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     targetTableIni : function () {
@@ -251,7 +274,6 @@ let Abrogation = {
             $("#abrTarget").hide();
             $("#abrHistory").show();
         }
-        console.log(code);
     },
 
     goIncomDataList : function () {

@@ -29,6 +29,18 @@ let Incomjego = {
             Incomjego.subChkDataExcContinue('abr');
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Incomjego.downloadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/incom/incomingApi/dataListJegoExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {
@@ -80,6 +92,8 @@ let Incomjego = {
         $("#iclass").val(data[0]);
         $("#ingcd").val(data[1]);
         $("#ingnm").val(data[2]);
+        $("#phanm").val(data[4]);
+        $("#prdnm").val(data[5]);
         Incomjego.goIncomDataList();
     },
 

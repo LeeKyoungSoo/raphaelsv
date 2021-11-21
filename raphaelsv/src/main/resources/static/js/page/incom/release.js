@@ -11,6 +11,10 @@ let Release = {
     config : function () {
         $("#stdt").datepicker('setDate', '-3M');
         $("#endt").datepicker('setDate', 'today');
+
+        $("#relDataView").show();
+        $("#relExcelUploadView").hide();
+
         return false;
     },
 
@@ -19,6 +23,23 @@ let Release = {
             Release.goDataList();
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Release.downloadExcel();
+            return false;
+        });
+
+        $("#excelUploadBtn").on("click", function(ev) {
+            Release.uploadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/incom/releaseApi/dataListExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {
@@ -51,6 +72,7 @@ let Release = {
                     'className': 'alRight',
                 },
             ],
+            order: [[0, 'desc']],
             responsive: true,
             bInfo: false,
             lengthMenu: [20, 40, 60, 80]
@@ -106,4 +128,62 @@ let Release = {
             }
         });
     },
+
+    tabChange : function (code) {
+        if ( code == 1 ) {
+            Release.goDataList();
+            $("#relDataView").show();
+            $("#relExcelUploadView").hide();
+        }
+        else {
+            $("#relDataView").hide();
+            $("#relExcelUploadView").show();
+        }
+        console.log(code);
+    },
+
+    uploadExcel : function () {
+        if ( $('#excelfile')[0].files[0] == null || $('#excelfile')[0].files[0] == "" ) {
+            modal({
+                type: 'error',
+                title: 'error',
+                text: "파일이 없습니다."
+            });
+            return;
+        }
+
+        let param = new FormData(document.getElementById("excelFrm"));
+        $.ajax({
+            url: '/incom/releaseApi/dataExcelUpload',
+            type:'post',
+            enctype: 'multipart/form-data',
+            dataType: 'json',
+            data: param,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+                console.log(data);
+                let result = data.result;
+                if ( result == "SUCCESS") {
+                    modal({
+                        type: 'success',
+                        title: 'success',
+                        text: "엑셀데이터를 이용한 출고 처리를 완려하였습니다."
+                    });
+                }
+                else {
+                    modal({
+                        type: 'error',
+                        title: 'error',
+                        text: "처리를 완료하지 못했습니다. (엑셀데이터형식을 확인해주십시오)"
+                    });
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 }

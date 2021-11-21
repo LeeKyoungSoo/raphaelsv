@@ -47,5 +47,10 @@ public class IncomController {
         return mav;
     }
 
-
+    @RequestMapping(value = "/attain")
+    public ModelAndView goAttain(HttpServletRequest request) throws Exception {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("content/incom/attain.html");
+        return mav;
+    }
 }

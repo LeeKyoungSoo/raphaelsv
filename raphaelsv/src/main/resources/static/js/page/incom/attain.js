@@ -1,24 +1,39 @@
-let Incoming = {
+let Attain = {
     init : function () {
-        Incoming.config();
-        Incoming.button_init();
-        Incoming.ViewDataInt();
-        Incoming.dataTableIni();
-        Incoming.goDataList();
-        Common.goPharmaList();
+        Attain.config();
+        Attain.button_init();
+        Attain.ViewDataInt();
+        Attain.dataTableIni();
+        Attain.goDataList();
     },
 
     config : function () {
-        $("#stdt").datepicker('setDate', '-3M');
-        $("#endt").datepicker('setDate', 'today');
+
         return false;
     },
 
     button_init : function () {
+        $('#select_all').on('click', function(){
+            let rows = $('#dataTable').DataTable().rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
         $("#searchBtn").on("click", function(ev) {
-            Incoming.goDataList();
+            Attain.goDataList();
             return false;
         });
+
+        $("#excelBtn").on("click", function(ev) {
+            Attain.downloadExcel();
+            return false;
+        });
+    },
+
+    downloadExcel : function () {
+        const url = '/incom/attainApi/dataListExcel';
+        let f = document.dataFrm;
+        f.action = url;
+        f.submit();
     },
 
     dataTableIni : function () {
@@ -38,20 +53,20 @@ let Incoming = {
             paging: true,
             columnDefs: [
                 {
-                    "targets": [12,13,14,15],
-                    "visible": false,
-                    "searchable": false
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center alCenter',
+                    'render': function (data, type, full, meta){
+                        return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                    }
                 },
                 {
-                    'targets': [0,6,11],
-                    'className': 'alCenter',
-                },
-                {
-                    'targets': [3,7,8,9,10],
+                    'targets': [4,5,6,7,8,9],
                     'className': 'alRight',
                 },
             ],
-            order: [[0, 'desc']],
+            order: [[0, 'asc']],
             responsive: true,
             bInfo: false,
             lengthMenu: [20, 40, 60, 80]
@@ -62,20 +77,17 @@ let Incoming = {
             $("#dataTable tr").not(this).removeClass('selected');
             $(this).addClass('selected');
             console.log(data);
-            Incoming.ViewData(data);
+            Attain.ViewData(data);
         });
 
-        $("#excelBtn").on("click", function(ev) {
-            Incoming.downloadExcel();
-            return false;
+        $('#dataTable tbody').on('change', 'input[type="checkbox"]', function(){
+            if ( !this.checked ) {
+                let el = $('#select_all').get(0);
+                if ( el && el.checked && ('indeterminate' in el) ) {
+                    el.indeterminate = true;
+                }
+            }
         });
-    },
-
-    downloadExcel : function () {
-        const url = '/incom/incomingApi/dataListExcel';
-        let f = document.dataFrm;
-        f.action = url;
-        f.submit();
     },
 
     ViewData : function (data) {
@@ -90,7 +102,7 @@ let Incoming = {
         let tableGrid = $('#dataTable').DataTable();
         let param = $("form[name=dataFrm]").serialize();
         $.ajax({
-            url: '/incom/incomingApi/dataList',
+            url: '/incom/attainApi/dataList',
             type: 'post',
             data: param,
             success: function (data) {
@@ -99,22 +111,16 @@ let Incoming = {
                 let rowData = data.dataList;
                 $.each(rowData, function (key) {
                     tableGrid.row.add([
-                        rowData[key].regdt,
+                        rowData[key].flgpercent,
+                        rowData[key].iclass,
                         rowData[key].ingcd,
                         rowData[key].ingnm,
                         rowData[key].capacity,
-                        rowData[key].phanm,
-                        rowData[key].prdnm,
-                        rowData[key].expdt,
-                        rowData[key].incomstd,
-                        rowData[key].incomcnt,
-                        rowData[key].incomstdcnt,
                         rowData[key].nowcnt,
-                        rowData[key].bigo,
-                        rowData[key].incomcd,   //12
-                        rowData[key].supcd,
-                        rowData[key].iclass,
-                        rowData[key].phacd,
+                        rowData[key].moncnt,
+                        rowData[key].flgcnt,
+                        rowData[key].flgpercentval,
+                        rowData[key].reqcnt,
                     ]).draw(false);
                 });
             },
