@@ -55,6 +55,22 @@
                                                 </span>
                                     <span class="text">Excel</span>
                                 </a>
+
+                                <a id="huwonBtn" href="#"
+                                   class="btn btn-primary btn-icon-split btn-sm">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-arrow-right fa-sm"></i>
+                                                </span>
+                                    <span class="text">후원신청</span>
+                                </a>
+
+                                <a id="gumaeBtn" href="#"
+                                   class="btn btn-primary btn-icon-split btn-sm">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-arrow-right fa-sm"></i>
+                                                </span>
+                                    <span class="text">구매신청</span>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -92,6 +108,121 @@
         <!-- 코드목록 end -->
     </div>
 
+    <div id="adMoniModal" class="adMoniModal">
+        <div id="pcnctcae" class="card-body aeChartUI adMoniModalCont">
+            <table style="width: 100%;">
+                <colgroup>
+                    <col style="width:50%;">
+                    <col style="width:50%;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td valign="bottom">
+                    </td>
+                    <td align="right">
+                        <a id="incomSaveBtn" href="#" class="btn btn-primary btn-icon-split btn-sm" style="margin-bottom:8px;margin-right:8px">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                            <span id="gubunTxt" class="text">후원신청등록</span>
+                        </a>
+
+                        <a id="incomClosebtn" href="#" class="btn btn-primary btn-icon-split btn-sm" style="margin-bottom:8px;margin-right:8px">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span class="text">닫기</span>
+                        </a>
+                    </td>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table id="incomingAddList" style="width: 100%;" class="tableClass">
+                <thead>
+                <tr>
+                    <th class="tdTextCenter">분류</th>
+                    <th class="tdTextCenter">코드</th>
+                    <th class="tdTextCenter">성분</th>
+                    <th class="tdTextCenter">용량</th>
+                    <th class="tdTextCenter">제약사</th>
+                    <th class="tdTextCenter">상품명</th>
+                    <th class="tdTextCenter">잔고</th>
+                    <th class="tdTextCenter">신청량</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <form id="supportFrm" name="supportFrm" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" id="gubun" name="gubun">
+        <input type="hidden" id="supcd" name="supcd">
+        <input type="hidden" id="iclass" name="iclass">
+        <input type="hidden" id="ingcd" name="ingcd">
+        <input type="hidden" id="ingnm" name="ingnm">
+        <input type="hidden" id="phacd" name="phacd">
+        <input type="hidden" id="prdnm" name="prdnm">
+        <input type="hidden" id="jango" name="jango">
+        <input type="hidden" id="reqcnt" name="reqcnt">
+    </form>
+
+    <style>
+        .adMoniModal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 999; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+        }
+
+        .adMoniModalCont {
+            margin: auto;
+            padding: 20px;
+            width:70%;
+            z-index: 999;
+            background-color: #ffffff;
+        }
+
+        .tableClass {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .tableClass td, .tableClass th {
+            padding: .55rem;
+        }
+
+        .tdTextRight {
+            text-align: right;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+
+        .tdTextLeft {
+            text-align: left;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+
+        .tdTextCenter {
+            text-align: center;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+    </style>
     <script th:src="@{/js/com/util.js}" type="text/javascript"></script>
     <script th:src="@{/js/page/common.js}" type="text/javascript"></script>
     <script th:src="@{/js/page/incom/attain.js}" type="text/javascript"></script>
